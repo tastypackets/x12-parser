@@ -1,0 +1,17 @@
+{
+    "opts": {
+        "template": "node_modules/tui-jsdoc-template",
+        "encoding": "utf8",
+        "destination": "./docs/",
+        "recurse": true
+    },
+    "templates": {
+        "name": "X12 EDI Parser",
+        "footerText": "A JavaScript X12 parser using data streams",
+        "logo": {
+            "width": "0px",
+            "height": "0px",
+            "link": "git@github.com:tastypackets/x12.git"
+        }
+    }
+}
