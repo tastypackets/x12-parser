@@ -49,5 +49,15 @@ describe('X12parser', function () {
                 counter++
             });
         });
+        it('Should parse multiline files without delimiter (LF/CRLF is delimiter)', function() {
+            const myParser = new X12parser();
+            const testFile = createReadStream('./test/testFiles/835/multiLineNotDelimited.edi');
+            let counter = 0; // So ugly... This should be done nicer
+            const { finished } = require('./testFiles/835/profee-done');
+            testFile.pipe(myParser).on('data', data => {
+                assert.deepStrictEqual(data, finished[counter])
+                counter++
+            });
+        });
     });
 });
