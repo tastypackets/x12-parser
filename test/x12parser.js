@@ -15,6 +15,7 @@ describe('X12parser', function () {
             assert(myParser instanceof require("events").EventEmitter);
         });
     });
+    //TODO: Detect delimiters fn, rmeove delimiters
     describe('835 File Tests', function () {
         it('Should parse files with CRLF', function () {
             const myParser = new X12parser();
