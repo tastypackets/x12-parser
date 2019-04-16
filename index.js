@@ -1,0 +1,1 @@
+exports.X12parser = require('./lib/X12parser');
