@@ -15,7 +15,32 @@ describe('X12parser', function () {
             assert(myParser instanceof require("events").EventEmitter);
         });
     });
-    //TODO: Detect delimiters fn, rmeove delimiters
+    describe('#detectDelimiters()', function () {
+        const isa1 = 'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:~';
+        const isa2 = 'ISA&00&          &00&          &ZZ&EMEDNYBAT      &ZZ&ETIN           &100101&1000&#&00501&006000600&0&T&@$';
+        it('Should be abl to auto detect delimiters from ISA', function () {
+            assert.deepEqual(X12parser.detectDelimiters(isa1), {segment: '~', component: ':', element: '*', repetition: '^'});
+            assert.deepEqual(X12parser.detectDelimiters(isa2), {segment: '$', component: '@', element: '&', repetition: '#'});
+        });
+    });
+    describe('#removeDelimiters()', function () {
+        const myParser = new X12parser();
+        myParser._delimiters = {segment: '~', component: ':', element: '*', repetition: '^'}
+        const isa1 = '~ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:';
+        const isa2 = 'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:~';
+        const isa3 = '~ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:~';
+
+        const delimitersRemoved = 'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:';
+        it('Should remove delimiter from start of string', function () {
+            assert.deepEqual(myParser.removeDelimiters(isa1), delimitersRemoved);
+        });
+        it('Should remove delimiter from end of string', function () {
+            assert.deepEqual(myParser.removeDelimiters(isa2), delimitersRemoved);
+        });
+        it('Should remove delimiter from start and end of string', function () {
+            assert.deepEqual(myParser.removeDelimiters(isa3), delimitersRemoved);
+        });
+    });
     describe('835 File Tests', function () {
         it('Should parse files with CRLF', function () {
             const myParser = new X12parser();
