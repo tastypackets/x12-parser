@@ -1,14 +1,14 @@
 {
   "scripts": {
     "test": "mocha",
-    "docs": "jsdoc index.js -c jsdoc.json -R ./README.md"
+    "docs": "jsdoc ./lib/X12parser.js -c jsdoc.json -r ./README.md"
   },
   "dependencies": {},
-  "name": "x12",
+  "name": "x12-parser",
   "version": "1.0.0",
   "description": "JavaScript X12 parser",
   "main": "index.js",
-  "repository": "git@github.com:tastypackets/x12.git",
+  "repository": "https://github.com/tastypackets/x12-parser",
   "author": "Ezekiel Keator <20361796+tastypackets@users.noreply.github.com>",
   "license": "MIT",
   "private": false,
