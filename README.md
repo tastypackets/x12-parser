@@ -3,13 +3,13 @@
 # Initial release to-do list
 - [x] Create parser
 - - [x] Create initial unit tests for 835s
-- [] Create docs
-- [] Create validator stream
-- - [] Unit tests
-- [] Create grouping stream
-- - [] Unit tests
-- [] Create example end to end usage
-- [] Publish to NPM
+- [ ] Create docs
+- [ ] Create validator stream
+- - [ ] Unit tests
+- [ ] Create grouping stream
+- - [ ] Unit tests
+- [ ] Create example end to end usage
+- [ ] Publish to NPM
 
 ## Beta
 This lib is currently only being used in beta testing and is not yet released on NPM.
