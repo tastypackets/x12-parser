@@ -32,7 +32,7 @@ describe('Segment', function () {
     // To be changed in future update when type testing is added to segment class
     describe('#constructor()', function () {
         const mySegment = new Segment('AMT*AU*34.25', delimiters);
-        it('Should return an X12parser', function () {
+        it('Should return a Segment', function () {
             assert(mySegment instanceof Segment);
         });
         it('Should parse passed raw element string', function () {
