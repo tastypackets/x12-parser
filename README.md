@@ -2,12 +2,13 @@
 
 # Initial release to-do list
 - [x] Create parser
-- - [x] Create initial unit tests for 835s
+- [x] Create parser unit tests for 835s
 - [ ] Create docs
 - [ ] Create validator stream
-- - [ ] Unit tests
-- [ ] Create grouping stream
-- - [ ] Unit tests
+- [ ] Validator unit tests
+- [X] Create grouping stream
+- [X] Grouping unit test
+- [ ] End to end test (pipe)
 - [ ] Create example end to end usage
 - [ ] Publish to NPM
 
