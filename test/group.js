@@ -37,7 +37,9 @@ describe('Group', function () {
 
     const schema = {
         "version": "005010X221A1", // What version of the transaction set this applies to
-        "transactionSet": "835", // The transaction set this applies to
+        "start": 'ST', // What segment starts the group
+        "name": "Transaction", // What is the name of the group
+        "end": "SE", // Closes all nested groups when this is detected
         "groups" : [ // An array of groups to create
             {
                 "start": 'N1', // What segment starts the group

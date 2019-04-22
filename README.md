@@ -4,8 +4,12 @@
 - [x] Create parser
 - [x] Create parser unit tests for 835s
 - [ ] Create docs
-- [ ] Create validator stream
-- [ ] Validator unit tests
+- [X] Create Schema class for grouping
+- [ ] Create Schema class unit tests
+- [X] Create Group class for handling grouping logic
+- [X] Create unit tests for Group class
+- [X] Create Grouper stream that uses Group class
+- [ ] Create Grouper unit tests
 - [X] Create grouping stream
 - [X] Grouping unit test
 - [ ] End to end test (pipe)
@@ -34,7 +38,7 @@ The validation process was built with 835 X221 and some assumption may have been
 The validator takes in a JSON object that indicates the transaction set and version it applies to. If the file processed does not match this an error will be appended, but it will still and try to use this validator. You can also pass an array of validators, which the validation stream will then try to select based on the transaction set and version located in the X12 file to auto detect the right validator.
 
 Schema objects should look like this:
-
+OLD, needs to be updated now that we added schema class.
 ```javascript
 {
     "transactionSet": "835", // The transaction set this applies to
@@ -65,38 +69,32 @@ If loop is unbounded it will be terminated by either another peer loop or it wil
 Below is an example of grouping everything inside the ISA, however this is not a good idea for production. Since there is an unkown number of nested elements it may have memory issues. It would be better in this case to group on something like the CLP lines.
 ```javascript
 {
-    "version": "005010X221A1", // What version of the transaction set this applies to
-    "transactionSet": "835", // The transaction set this applies to
-    "groups": [ // An array of groups to create
+    "start": "ISA", // What segment starts the group
+    "end": "ISE", // What segment ends the group
+    "name": "Envelope", // What is the name of the group
+    "groups": [ // Nested groups
         {
-            "start": "ISA", // What segment starts the group
-            "end": "ISE", // What segment ends the group
-            "name": "Envelope", // What is the name of the group
-            "groups": [ // Nested groups
+            "start": "BPR",
+            "terminators": ["N1"],
+            "name": "headers"
+        },
+        {
+            "start": "N1",
+            "terminators": ["LX"],
+            "name": "1000"
+        },
+        {
+            "start": "LX",
+            "name": "2000",
+            "terminators": ["SE"],
+            "groups": [
                 {
-                    "start": "BPR",
-                    "terminators": ["N1"],
-                    "name": "headers"
-                },
-                {
-                    "start": "N1",
-                    "terminators": ["LX"],
-                    "name": "1000"
-                },
-                {
-                    "start": "LX",
-                    "name": "2000",
-                    "terminators": ["SE"],
+                    "start": "CLP",
+                    "name": "2100",
                     "groups": [
                         {
-                            "start": "CLP",
-                            "name": "2100",
-                            "groups": [
-                                {
-                                    "start": "SVC",
-                                    "name": "2110",
-                                }
-                            ]
+                            "start": "SVC",
+                            "name": "2110",
                         }
                     ]
                 }
@@ -104,6 +102,57 @@ Below is an example of grouping everything inside the ISA, however this is not a
         }
     ]
 }
+```
+
+## Full Example - WIP
+```javascript
+const { X12parser, X12grouper, Schema } = require('./index');
+const { createReadStream } = require('fs');
+
+const schema = {
+    "start": "ISA", // What segment starts the group
+    "end": "ISE", // What segment ends the group
+    "name": "Envelope", // What is the name of the group
+    "groups": [ // Nested groups
+        {
+            "start": "BPR",
+            "terminators": ["N1"],
+            "name": "headers"
+        },
+        {
+            "start": "N1",
+            "terminators": ["LX"],
+            "name": "1000"
+        },
+        {
+            "start": "LX",
+            "name": "2000",
+            "terminators": ["SE"],
+            "groups": [
+                {
+                    "start": "CLP",
+                    "name": "2100",
+                    "groups": [
+                        {
+                            "start": "SVC",
+                            "name": "2110",
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+const myParser = new X12parser();
+const mySchema = new Schema('005010X221A1', schema);
+const myGrouper = new X12grouper(mySchema);
+
+const testFile = createReadStream('./test/testFiles/835/profee.edi')
+
+testFile.pipe(myParser).pipe(myGrouper).on('data', data => {
+    console.log(data)
+})
 ```
 
 ### Overview
