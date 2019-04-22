@@ -7,6 +7,7 @@
 - [X] Create Schema class for grouping
 - [ ] Create Schema class unit tests
 - [X] Create Group class for handling grouping logic
+- [ ] Consider adding multi root level groups to schema & grouoper
 - [X] Create unit tests for Group class
 - [X] Create Grouper stream that uses Group class
 - [ ] Create Grouper unit tests
