@@ -56,6 +56,88 @@
     
 
 
+    <section>
+        <article class="readme"><p><a href="https://travis-ci.org/tastypackets/x12-parser"><img src="https://travis-ci.org/tastypackets/x12-parser.svg?branch=master" alt="Build Status"></a></p>
+<h1>Initial release to-do list</h1><ul>
+<li>[x] Create parser</li>
+<li>[x] Create parser unit tests for 835s</li>
+<li>[ ] Create docs</li>
+<li>[X] Create Schema class for grouping</li>
+<li>[X] Create Schema class unit tests</li>
+<li>[X] Create Group class for handling grouping logic</li>
+<li>[ ] Create validation class</li>
+<li>[ ] Create validation unit tests</li>
+<li>[ ] Consider adding multi root level groups to schema &amp; grouper</li>
+<li>[X] Create unit tests for Group class</li>
+<li>[X] Create Grouper stream that uses Group class</li>
+<li>[ ] Create Grouper stream unit tests</li>
+<li>[X] Create grouping stream</li>
+<li>[X] Grouping unit test</li>
+<li>[ ] End to end test (pipe)</li>
+<li>[ ] Create example end to end usage</li>
+<li>[ ] Publish to NPM</li>
+</ul>
+<h2>Beta</h2><p>This lib is in development and this is a pre-release, it not recommended for use in production at this time. There will likely be frequent breaking changes while in beta.</p>
+<p>https://tastypackets.github.io/x12-parser/</p>
+<h2>x12</h2><p>JavaScript EDI Parser that uses data streams</p>
+<h2>Notes</h2><p><strong>All items below this are only for beta / development and will be replaced with proper documentation for release.</strong>
+This lib does not enforce 2-character segment &amp; component names, it simply increments the number. For example, <code>ISA01</code> would be <code>ISA1</code> in the output object and <code>ISA10</code> would still be <code>ISA10</code>. Similarly, components such as <code>SVC01-01</code> would be <code>SVC1-1</code>.</p>
+<p>If this becomes an issue for processing the 2-character enforcement can be added, however it was dropped to reduce processing of each segment name.</p>
+<h2>Validation</h2><p>TODO</p>
+<h2>Grouping</h2><p>The grouping stage is another transform stream, it is designed to help group unbounded loops in the X12 files.</p>
+<p>You must provide it a list of groups and what indicates the start / stop of a loop. If the loop in unbounded the stop is <code>null</code>.</p>
+<p>Every group will be accumulated until another group starts, at which point the group will be pushed down the stream. This should be kept in mind when grouping, because making large groups could cause memory issues and reduce performance of streams.</p>
+<p>If loop is unbounded it will be terminated by either another peer loop or it will be terminated by the closer of a bounded loop.</p>
+<p>Below is an example of grouping everything inside the ISA, however <strong>this is not a good idea</strong> for production. There is an unknown number of nested elements and it may have memory issues. It would be better in this case to group on something like the CLP lines.</p>
+<h2>Full Example - WIP</h2><pre class="prettyprint source lang-javascript"><code>const { X12parser, X12grouper, Schema } = require('./index');
+const { createReadStream } = require('fs');
+
+const schema = {
+    &quot;start&quot;: &quot;ISA&quot;, // What segment starts the group
+    &quot;end&quot;: &quot;IEA&quot;, // What segment ends the group
+    &quot;name&quot;: &quot;Envelope&quot;, // What is the name of the group
+    &quot;groups&quot;: [ // Nested groups
+        {
+            &quot;start&quot;: &quot;BPR&quot;,
+            &quot;terminators&quot;: [&quot;N1&quot;],
+            &quot;name&quot;: &quot;headers&quot;
+        },
+        {
+            &quot;start&quot;: &quot;N1&quot;,
+            &quot;terminators&quot;: [&quot;LX&quot;],
+            &quot;name&quot;: &quot;1000&quot;
+        },
+        {
+            &quot;start&quot;: &quot;LX&quot;,
+            &quot;name&quot;: &quot;2000&quot;,
+            &quot;terminators&quot;: [&quot;SE&quot;],
+            &quot;groups&quot;: [
+                {
+                    &quot;start&quot;: &quot;CLP&quot;,
+                    &quot;name&quot;: &quot;2100&quot;,
+                    &quot;groups&quot;: [
+                        {
+                            &quot;start&quot;: &quot;SVC&quot;,
+                            &quot;name&quot;: &quot;2110&quot;,
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+const myParser = new X12parser();
+const mySchema = new Schema('005010X221A1', schema);
+const myGrouper = new X12grouper(mySchema);
+
+const testFile = createReadStream('./test/testFiles/835/profee.edi')
+
+testFile.pipe(myParser).pipe(myGrouper).on('data', data => {
+    console.log(data)
+})</code></pre></article>
+    </section>
+
 
 
 

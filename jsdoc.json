@@ -6,7 +6,8 @@
         "template": "node_modules/tui-jsdoc-template",
         "encoding": "utf8",
         "destination": "./docs/",
-        "recurse": true
+        "recurse": true,
+        "readme": "./README.md"
     },
     "templates": {
         "name": "X12 EDI Parser",
