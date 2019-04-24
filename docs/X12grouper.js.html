@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: X12parser.js | X12 EDI Parser</title>
+    <title>Source: X12grouper.js | X12 EDI Parser</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -49,35 +49,38 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>const { Transform } = require('stream');
-const { StringDecoder } = require('string_decoder');
-const Segment = require('./Segment');
+const Schema = require('./Schema');
+const Group = require('./Group');
 
-class X12parser extends Transform {
+class X12grouper extends Transform {
     /**
-     * Creates a new X12parser stream
-     * @param {string} defaultEncoding The encoding of the file
+     * Creates a new Validator stream
+     * @param {Schema[]} schemas An array of Schemas the grouper can use to dynamically adjust
      */
-    constructor(defaultEncoding = 'ascii') {
-        super({objectMode: true, defaultEncoding})
-        this._decoder = new StringDecoder(defaultEncoding);
-        this._firstLine = true;
-        this._leftOver = '';
-        this._delimiters = {
-            segment: '',
-            component: '',
-            element: '',
-            repetition: ''
-        }
+    constructor(schemas = null) {
+        super({objectMode: true})
+
+        this._schemas = Array.isArray(schemas) ? schemas : [schemas]; //TODO: Validate schema
+        this._version = '';
+        this._activeGroup = null;
+        this._defaultSchema = this._schemas.find(schema => schema.default) || this._schemas[0];
+        this._initialHold = [];
+
+        this._schemas.forEach(schema => {
+            if(!(schema instanceof Schema)) {
+                throw new TypeError('Every schema must be a Schema object')
+            }
+        })
     }
-    
+
     /**
      * Do not directly use, this is called by readable stream methods when stream has finished
      * @param {function} cb Execute cb when done flushing
      */
     _flush(cb) {
-        // Send whatever is left over into generator
-        const data = this.splitSegments(this._leftOver);
-        this.generateSegments(data);
+        if(this._activeGroup) {
+            this.groupDone(this._activeGroup)
+        }
         cb();
     }
 
@@ -88,95 +91,67 @@ class X12parser extends Transform {
      * @param {function} cb Callback indicating chunk was processed and ready for next chunk
      */
     _transform(chunk, encoding, cb) {
-        chunk = this._decoder.write(chunk);
-
-        this.processChunk(chunk);
+        this.processSegment(chunk);
         cb();
     }
 
-    /**
-     * Creates segment objects and then pushes formatted data in stream
-     * @param {object[]} segments The array of segments to be pushed down the stream
-     */
-    generateSegments(segments) {
-        segments.forEach(item => {
-            const segment = new Segment(item, { ...this._delimiters });
-            this.push(segment.formatted);
-        })
+    //TODO: Add validation to GS
+    set version(GS) {
+        this._version = GS['8'];
+        this._initialHold.forEach(segment => this.appendToGroup(segment));
+        this._initialHold = [];
     }
 
     /**
-     * Attempts to auto detect the file delimiters
-     * @param {string} data The first string in the file
-     * TODO: Add additional validations here
+     * Creates a new group
+     * @param {object} segment Segment from X12parser
      */
-    static detectDelimiters(data) {
-        return {
-            segment: data[105],
-            component: data[104],
-            element: data[3],
-            repetition: data[82]
+    newGroup(segment) {
+        const match = this._schemas.find(item => item.version === this._version) || this._defaultSchema;
+
+        // If there is no active groups and schema start doesn't match send this along as-is wo/ grouping
+        if(segment.name !== match.schema.start &amp;&amp; !this._activeGroup) {
+           this.push(segment)
+        } else {
+            this._activeGroup = new Group(match.schema, segment, this.groupDone.bind(this));
         }
     }
 
     /**
-     * Checks if there are any delimiters at the start or end of a string
-     * @param {string} chunk The raw string for from read stream
-     * @returns {string} String with delimiters removed
+     * Sends the grouped data down the stream
+     * @param {Group} group Group to send
      */
-    removeDelimiters(chunk) {
-        let data = chunk;
-        if(data[0] === this._delimiters.segment) {
-            data = data.substring(1);
-        }
-        if(data[data.length -1] === this._delimiters.segment) {
-            data = data.substring(0, data.length - 1);
-        }
+    groupDone(group) {
+        this.push(group.data);
+        this._activeGroup = null;
+    }
 
-        return data;
+    appendToGroup(segment) {
+        if(!this._activeGroup) {
+            this.newGroup(segment);
+        } else if(!this._activeGroup.add(segment)) {
+            this.newGroup(segment);
+        }        
     }
 
     /**
-     * Splits up a string into an array of segments
-     * @param {string} rawString Full segment string from EDI file
-     * @returns {string[]} An array of segments
+     * Process a segment
+     * @param {string} segment The segment from X12parser stream
      */
-    splitSegments(rawString) {
-        return rawString.split(this._delimiters.segment);
-    }
-
-    /**
-     * Processes one chunk of an X12 file
-     * @param {string} chunk The chunk from a read stream
-     */
-    processChunk(chunk) {
-        // Remove CRLF
-        let data = chunk.replace(/\r\n/g, "\n");
-
-        // Append any data held from last chunk
-        data = this._leftOver + data;
-
-        // If this is first line in the file try to set delimiters
-        if(this._firstLine) {
-            this._delimiters = X12parser.detectDelimiters(data);
-            this._firstLine = false;
+    processSegment(segment) {
+        // Since we select version from GS we need to hold ISA in case it's part of schema
+        if(segment.name === 'ISA') {
+            this._initialHold.push(segment);
+            return;
+        } else if(segment.name === 'GS') {
+            this.version = segment;
         }
 
-        // Make sure there are not delimiters at start or end of the string
-        data = this.removeDelimiters(data);
-
-        // Get array segments
-        const segments = this.splitSegments(data);
-
-        // Store last segment, it may not be a full segment and should be processed w/ next chunk
-        this._leftOver = segments.splice(-1, 1)[0];
-
-        // Generate and push data in stream
-        this.generateSegments(segments);
+        this.appendToGroup(segment);
     }
 }
 
-module.exports = X12parser;</code></pre>
+module.exports = X12grouper;</code></pre>
         </article>
     </section>
 

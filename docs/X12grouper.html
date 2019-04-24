@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Class: X12parser | X12 EDI Parser</title>
+    <title>Class: X12grouper | X12 EDI Parser</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -48,7 +48,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>X12parser<span class="signature">(defaultEncoding)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>X12grouper<span class="signature">(schemas)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -61,14 +61,14 @@
 
 <dt>
     
-        <h4 class="name" id="X12parser">
+        <h4 class="name" id="X12grouper">
             
-                new <span class="type-signature"></span>X12parser<span class="signature">(defaultEncoding)</span><span class="type-signature"></span>
+                new <span class="type-signature"></span>X12grouper<span class="signature">(schemas)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line10">line 10</a></code>
+                <code><a href="X12grouper.js.html">X12grouper.js</a></code>,
+                <code><a href="X12grouper.js.html#line10">line 10</a></code>
             </div>
             
         </h4>
@@ -80,7 +80,7 @@
 
     
     <div class="description">
-        Creates a new X12parser stream
+        Creates a new Validator stream
     </div>
     
 
@@ -118,13 +118,13 @@
 
         <tr>
             
-                <td class="name"><code>defaultEncoding</code></td>
+                <td class="name"><code>schemas</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Array.&lt;<a href="Schema.html">Schema</a>></span>
 
 
             
@@ -135,12 +135,12 @@
             
                 <td class="default">
                 
-                    ascii
+                    null
                 
                 </td>
             
 
-            <td class="description last">The encoding of the file</td>
+            <td class="description last">An array of Schemas the grouper can use to dynamically adjust</td>
         </tr>
 
     
@@ -229,153 +229,14 @@
 
 <dt>
     
-        <h4 class="name" id=".detectDelimiters">
-            
-                <span class="type-signature"><span class="icon green">static</span> </span>detectDelimiters<span class="signature">(data)</span><span class="type-signature"></span>
-                
-            
-            <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line63">line 63</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Attempts to auto detect the file delimiters
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The first string in the fileTODO: Add additional validations here</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
         <h4 class="name" id="_flush">
             
                 <span class="type-signature"></span>_flush<span class="signature">(cb)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line27">line 27</a></code>
+                <code><a href="X12grouper.js.html">X12grouper.js</a></code>,
+                <code><a href="X12grouper.js.html#line30">line 30</a></code>
             </div>
             
         </h4>
@@ -513,8 +374,8 @@
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line40">line 40</a></code>
+                <code><a href="X12grouper.js.html">X12grouper.js</a></code>,
+                <code><a href="X12grouper.js.html#line43">line 43</a></code>
             </div>
             
         </h4>
@@ -692,14 +553,14 @@
 
 <dt>
     
-        <h4 class="name" id="generateSegments">
+        <h4 class="name" id="groupDone">
             
-                <span class="type-signature"></span>generateSegments<span class="signature">(segments)</span><span class="type-signature"></span>
+                <span class="type-signature"></span>groupDone<span class="signature">(group)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line51">line 51</a></code>
+                <code><a href="X12grouper.js.html">X12grouper.js</a></code>,
+                <code><a href="X12grouper.js.html#line74">line 74</a></code>
             </div>
             
         </h4>
@@ -711,7 +572,7 @@
 
     
     <div class="description">
-        Creates segment objects and then pushes formatted data in stream
+        Sends the grouped data down the stream
     </div>
     
 
@@ -747,13 +608,13 @@
 
         <tr>
             
-                <td class="name"><code>segments</code></td>
+                <td class="name"><code>group</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;object></span>
+<span class="param-type"><a href="Group.html">Group</a></span>
 
 
             
@@ -763,7 +624,7 @@
 
             
 
-            <td class="description last">The array of segments to be pushed down the stream</td>
+            <td class="description last">Group to send</td>
         </tr>
 
     
@@ -831,14 +692,14 @@
 
 <dt>
     
-        <h4 class="name" id="processChunk">
+        <h4 class="name" id="newGroup">
             
-                <span class="type-signature"></span>processChunk<span class="signature">(chunk)</span><span class="type-signature"></span>
+                <span class="type-signature"></span>newGroup<span class="signature">(segment)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line102">line 102</a></code>
+                <code><a href="X12grouper.js.html">X12grouper.js</a></code>,
+                <code><a href="X12grouper.js.html#line59">line 59</a></code>
             </div>
             
         </h4>
@@ -850,7 +711,7 @@
 
     
     <div class="description">
-        Processes one chunk of an X12 file
+        Creates a new group
     </div>
     
 
@@ -886,13 +747,13 @@
 
         <tr>
             
-                <td class="name"><code>chunk</code></td>
+                <td class="name"><code>segment</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">object</span>
 
 
             
@@ -902,7 +763,7 @@
 
             
 
-            <td class="description last">The chunk from a read stream</td>
+            <td class="description last">Segment from X12parser</td>
         </tr>
 
     
@@ -970,14 +831,14 @@
 
 <dt>
     
-        <h4 class="name" id="removeDelimiters">
+        <h4 class="name" id="processSegment">
             
-                <span class="type-signature"></span>removeDelimiters<span class="signature">(chunk)</span><span class="type-signature"> &rarr; {string}</span>
+                <span class="type-signature"></span>processSegment<span class="signature">(segment)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line77">line 77</a></code>
+                <code><a href="X12grouper.js.html">X12grouper.js</a></code>,
+                <code><a href="X12grouper.js.html#line91">line 91</a></code>
             </div>
             
         </h4>
@@ -989,7 +850,7 @@
 
     
     <div class="description">
-        Checks if there are any delimiters at the start or end of a string
+        Process a segment
     </div>
     
 
@@ -1025,7 +886,7 @@
 
         <tr>
             
-                <td class="name"><code>chunk</code></td>
+                <td class="name"><code>segment</code></td>
             
 
             <td class="type">
@@ -1041,7 +902,7 @@
 
             
 
-            <td class="description last">The raw string for from read stream</td>
+            <td class="description last">The segment from X12parser stream</td>
         </tr>
 
     
@@ -1061,187 +922,6 @@
 
     
 
-    
-    <div class="container-returns">
-        <h5>Returns:</h5>
-        
-                
-
-
-
-<span class="param-type">string</span>
-
-
-
-
-
-- String with delimiters removed
-
-
-
-
-            
-    </div>
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
-        <h4 class="name" id="splitSegments">
-            
-                <span class="type-signature"></span>splitSegments<span class="signature">(rawString)</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span>
-                
-            
-            <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line94">line 94</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Splits up a string into an array of segments
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>rawString</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Full segment string from EDI file</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-returns">
-        <h5>Returns:</h5>
-        
-                
-
-
-
-<span class="param-type">Array.&lt;string></span>
-
-
-
-
-
-- An array of segments
-
-
-
-
-            
-    </div>
     
 
     
@@ -1310,7 +990,7 @@
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = 'X12parser_sub'.replace(/"/g, '_');
+        var id = 'X12grouper_sub'.replace(/"/g, '_');
         var selectedApi = document.getElementById(id); // do not use jquery selector
         var $selectedApi = $(selectedApi);
 

@@ -1,4 +1,7 @@
 {
+    "source": {
+        "include": ["lib/"]
+    },
     "opts": {
         "template": "node_modules/tui-jsdoc-template",
         "encoding": "utf8",

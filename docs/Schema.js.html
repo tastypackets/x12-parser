@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: X12parser.js | X12 EDI Parser</title>
+    <title>Source: Schema.js | X12 EDI Parser</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -48,135 +48,54 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const { Transform } = require('stream');
-const { StringDecoder } = require('string_decoder');
-const Segment = require('./Segment');
+            <pre class="prettyprint source linenums"><code>class Schema {
+    /**
+     * Creates a new segment object
+     * @param {string} version What transaction version this applies to
+     * @param {object} groups JSON schema of groupings
+     * @param {boolean} defaultSchema Indicates if this will be used if no schemas match transaction version
+     */
+    constructor(version, groups, defaultSchema) {
+        if(typeof version !== 'string')
+            throw new TypeError('File version must be a string');
 
-class X12parser extends Transform {
-    /**
-     * Creates a new X12parser stream
-     * @param {string} defaultEncoding The encoding of the file
-     */
-    constructor(defaultEncoding = 'ascii') {
-        super({objectMode: true, defaultEncoding})
-        this._decoder = new StringDecoder(defaultEncoding);
-        this._firstLine = true;
-        this._leftOver = '';
-        this._delimiters = {
-            segment: '',
-            component: '',
-            element: '',
-            repetition: ''
-        }
+        this._version = version;
+        this._default = !!defaultSchema; // Forces to bool
+        this._schema = Schema.verifySchema(groups); //TODO: Recrusive objs ?
     }
-    
-    /**
-     * Do not directly use, this is called by readable stream methods when stream has finished
-     * @param {function} cb Execute cb when done flushing
-     */
-    _flush(cb) {
-        // Send whatever is left over into generator
-        const data = this.splitSegments(this._leftOver);
-        this.generateSegments(data);
-        cb();
+
+    /** @type {string} */
+    get version() {
+        return this._version;
+    }
+
+    /** @type {object} */
+    get schema() {
+        return this._schema;
+    }
+
+    /** @type {boolean} */
+    get default() {
+        return this._default;
     }
 
     /**
-     * Node API for transform streams
-     * @param {object} chunk The next chunk of data from read stream
-     * @param {string} encoding The encoding of the chunk (e.g. UTF-8)
-     * @param {function} cb Callback indicating chunk was processed and ready for next chunk
+     * Takes a schema object and verifies it is valid
+     * @param {Schema} schema The schema to be verified
+     * @throws {Error} Throws an error if this is an invalid schema
      */
-    _transform(chunk, encoding, cb) {
-        chunk = this._decoder.write(chunk);
+    static verifySchema(schema) {
+        if(!schema.start)
+            throw new Error('Schema must have a start point');
 
-        this.processChunk(chunk);
-        cb();
-    }
+        if(schema.groups)
+            schema.groups.forEach(group => Schema.verifySchema(group));
 
-    /**
-     * Creates segment objects and then pushes formatted data in stream
-     * @param {object[]} segments The array of segments to be pushed down the stream
-     */
-    generateSegments(segments) {
-        segments.forEach(item => {
-            const segment = new Segment(item, { ...this._delimiters });
-            this.push(segment.formatted);
-        })
-    }
-
-    /**
-     * Attempts to auto detect the file delimiters
-     * @param {string} data The first string in the file
-     * TODO: Add additional validations here
-     */
-    static detectDelimiters(data) {
-        return {
-            segment: data[105],
-            component: data[104],
-            element: data[3],
-            repetition: data[82]
-        }
-    }
-
-    /**
-     * Checks if there are any delimiters at the start or end of a string
-     * @param {string} chunk The raw string for from read stream
-     * @returns {string} String with delimiters removed
-     */
-    removeDelimiters(chunk) {
-        let data = chunk;
-        if(data[0] === this._delimiters.segment) {
-            data = data.substring(1);
-        }
-        if(data[data.length -1] === this._delimiters.segment) {
-            data = data.substring(0, data.length - 1);
-        }
-
-        return data;
-    }
-
-    /**
-     * Splits up a string into an array of segments
-     * @param {string} rawString Full segment string from EDI file
-     * @returns {string[]} An array of segments
-     */
-    splitSegments(rawString) {
-        return rawString.split(this._delimiters.segment);
-    }
-
-    /**
-     * Processes one chunk of an X12 file
-     * @param {string} chunk The chunk from a read stream
-     */
-    processChunk(chunk) {
-        // Remove CRLF
-        let data = chunk.replace(/\r\n/g, "\n");
-
-        // Append any data held from last chunk
-        data = this._leftOver + data;
-
-        // If this is first line in the file try to set delimiters
-        if(this._firstLine) {
-            this._delimiters = X12parser.detectDelimiters(data);
-            this._firstLine = false;
-        }
-
-        // Make sure there are not delimiters at start or end of the string
-        data = this.removeDelimiters(data);
-
-        // Get array segments
-        const segments = this.splitSegments(data);
-
-        // Store last segment, it may not be a full segment and should be processed w/ next chunk
-        this._leftOver = segments.splice(-1, 1)[0];
-
-        // Generate and push data in stream
-        this.generateSegments(segments);
+        return schema;
     }
 }
 
-module.exports = X12parser;</code></pre>
+module.exports = Schema;</code></pre>
         </article>
     </section>
 

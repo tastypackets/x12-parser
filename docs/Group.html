@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Class: X12parser | X12 EDI Parser</title>
+    <title>Class: Group | X12 EDI Parser</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -48,7 +48,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>X12parser<span class="signature">(defaultEncoding)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Group<span class="signature">(schema, segment, terminateCB)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -61,14 +61,14 @@
 
 <dt>
     
-        <h4 class="name" id="X12parser">
+        <h4 class="name" id="Group">
             
-                new <span class="type-signature"></span>X12parser<span class="signature">(defaultEncoding)</span><span class="type-signature"></span>
+                new <span class="type-signature"></span>Group<span class="signature">(schema, segment, terminateCB)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line10">line 10</a></code>
+                <code><a href="Group.js.html">Group.js</a></code>,
+                <code><a href="Group.js.html#line8">line 8</a></code>
             </div>
             
         </h4>
@@ -80,7 +80,7 @@
 
     
     <div class="description">
-        Creates a new X12parser stream
+        Creates a new segment object
     </div>
     
 
@@ -106,8 +106,6 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -118,13 +116,13 @@
 
         <tr>
             
-                <td class="name"><code>defaultEncoding</code></td>
+                <td class="name"><code>schema</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="Schema.html">Schema</a></span>
 
 
             
@@ -133,14 +131,54 @@
             
 
             
-                <td class="default">
-                
-                    ascii
-                
-                </td>
+
+            <td class="description last">Schema to use for this grouping</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>segment</code></td>
             
 
-            <td class="description last">The encoding of the file</td>
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Segment.html">Segment</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Segment from X12parser to start group</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>terminateCB</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Function to execute when group is closed</td>
         </tr>
 
     
@@ -220,6 +258,160 @@
     
 
     
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id="data">
+    <span class="type-signature"></span>data<span class="type-signature"> :object</span>
+    
+    <div class="container-source members">
+        <code><a href="Group.js.html">Group.js</a></code>,
+        <code><a href="Group.js.html#line35">line 35</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="hasGroups">
+    <span class="type-signature"></span>hasGroups<span class="type-signature"> :boolean</span>
+    
+    <div class="container-source members">
+        <code><a href="Group.js.html">Group.js</a></code>,
+        <code><a href="Group.js.html#line30">line 30</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
 
     
         <h3 class="subsection-title">Methods</h3>
@@ -229,14 +421,14 @@
 
 <dt>
     
-        <h4 class="name" id=".detectDelimiters">
+        <h4 class="name" id="_addGroup">
             
-                <span class="type-signature"><span class="icon green">static</span> </span>detectDelimiters<span class="signature">(data)</span><span class="type-signature"></span>
+                <span class="type-signature"></span>_addGroup<span class="signature">(schema)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line63">line 63</a></code>
+                <code><a href="Group.js.html">Group.js</a></code>,
+                <code><a href="Group.js.html#line94">line 94</a></code>
             </div>
             
         </h4>
@@ -248,7 +440,146 @@
 
     
     <div class="description">
-        Attempts to auto detect the file delimiters
+        Adds a new group to the groups array
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>schema</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Schema for this group</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="_appendData">
+            
+                <span class="type-signature"></span>_appendData<span class="signature">(data)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="Group.js.html">Group.js</a></code>,
+                <code><a href="Group.js.html#line80">line 80</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Adds data to the held segments group
     </div>
     
 
@@ -290,7 +621,7 @@
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">object</span>
 
 
             
@@ -300,7 +631,7 @@
 
             
 
-            <td class="description last">The first string in the fileTODO: Add additional validations here</td>
+            <td class="description last">Segment data to be held in this group</td>
         </tr>
 
     
@@ -368,14 +699,14 @@
 
 <dt>
     
-        <h4 class="name" id="_flush">
+        <h4 class="name" id="_checkSubGroups">
             
-                <span class="type-signature"></span>_flush<span class="signature">(cb)</span><span class="type-signature"></span>
+                <span class="type-signature"></span>_checkSubGroups<span class="signature">(segment)</span><span class="type-signature"> &rarr; {boolean}</span>
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line27">line 27</a></code>
+                <code><a href="Group.js.html">Group.js</a></code>,
+                <code><a href="Group.js.html#line55">line 55</a></code>
             </div>
             
         </h4>
@@ -387,7 +718,7 @@
 
     
     <div class="description">
-        Do not directly use, this is called by readable stream methods when stream has finished
+        Checks with all subgroups in order if this belong to them
     </div>
     
 
@@ -423,146 +754,7 @@
 
         <tr>
             
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Execute cb when done flushing</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
-        <h4 class="name" id="_transform">
-            
-                <span class="type-signature"></span>_transform<span class="signature">(chunk, encoding, cb)</span><span class="type-signature"></span>
-                
-            
-            <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line40">line 40</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Node API for transform streams
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>chunk</code></td>
+                <td class="name"><code>segment</code></td>
             
 
             <td class="type">
@@ -578,470 +770,7 @@
 
             
 
-            <td class="description last">The next chunk of data from read stream</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>encoding</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The encoding of the chunk (e.g. UTF-8)</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Callback indicating chunk was processed and ready for next chunk</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
-        <h4 class="name" id="generateSegments">
-            
-                <span class="type-signature"></span>generateSegments<span class="signature">(segments)</span><span class="type-signature"></span>
-                
-            
-            <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line51">line 51</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Creates segment objects and then pushes formatted data in stream
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>segments</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;object></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The array of segments to be pushed down the stream</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
-        <h4 class="name" id="processChunk">
-            
-                <span class="type-signature"></span>processChunk<span class="signature">(chunk)</span><span class="type-signature"></span>
-                
-            
-            <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line102">line 102</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Processes one chunk of an X12 file
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>chunk</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The chunk from a read stream</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-</dd>
-
-            
-                
-
-<dt>
-    
-        <h4 class="name" id="removeDelimiters">
-            
-                <span class="type-signature"></span>removeDelimiters<span class="signature">(chunk)</span><span class="type-signature"> &rarr; {string}</span>
-                
-            
-            <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line77">line 77</a></code>
-            </div>
-            
-        </h4>
-
-        
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Checks if there are any delimiters at the start or end of a string
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-    <div class="container-params">
-        <h5>Parameters:</h5>
-        
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>chunk</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The raw string for from read stream</td>
+            <td class="description last">Segment from X12parser stream</td>
         </tr>
 
     
@@ -1069,13 +798,13 @@
 
 
 
-<span class="param-type">string</span>
+<span class="param-type">boolean</span>
 
 
 
 
 
-- String with delimiters removed
+- Indicates if any subgroups handled this
 
 
 
@@ -1130,14 +859,14 @@
 
 <dt>
     
-        <h4 class="name" id="splitSegments">
+        <h4 class="name" id="_isTerminator">
             
-                <span class="type-signature"></span>splitSegments<span class="signature">(rawString)</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span>
+                <span class="type-signature"></span>_isTerminator<span class="signature">(name)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
-                <code><a href="X12parser.js.html">X12parser.js</a></code>,
-                <code><a href="X12parser.js.html#line94">line 94</a></code>
+                <code><a href="Group.js.html">Group.js</a></code>,
+                <code><a href="Group.js.html#line46">line 46</a></code>
             </div>
             
         </h4>
@@ -1149,7 +878,7 @@
 
     
     <div class="description">
-        Splits up a string into an array of segments
+        Looks to see if a segment name is in the list of group terminators
     </div>
     
 
@@ -1185,7 +914,7 @@
 
         <tr>
             
-                <td class="name"><code>rawString</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
@@ -1201,7 +930,424 @@
 
             
 
-            <td class="description last">Full segment string from EDI file</td>
+            <td class="description last">Name of the segment</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="_removeGroup">
+            
+                <span class="type-signature"></span>_removeGroup<span class="signature">(group)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="Group.js.html">Group.js</a></code>,
+                <code><a href="Group.js.html#line102">line 102</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Removes one group from the list of held groups
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>group</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Group.html">Group</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Group to be removed</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="_subGroupSchema">
+            
+                <span class="type-signature"></span>_subGroupSchema<span class="signature">(name)</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="Group.js.html">Group.js</a></code>,
+                <code><a href="Group.js.html#line72">line 72</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Looks for a subgroup schema for this segment name
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Name of the segment</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="add">
+            
+                <span class="type-signature"></span>add<span class="signature">(segment)</span><span class="type-signature"> &rarr; {boolean}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="Group.js.html">Group.js</a></code>,
+                <code><a href="Group.js.html#line127">line 127</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Takes a segment and adds it to the proper part of a group if it belongs
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>segment</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Segment from X12parser stream</td>
         </tr>
 
     
@@ -1229,19 +1375,108 @@
 
 
 
-<span class="param-type">Array.&lt;string></span>
+<span class="param-type">boolean</span>
 
 
 
 
 
-- An array of segments
+- Indicates if group accepted the segment or not
 
 
 
 
             
     </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+    
+        <h4 class="name" id="terminate">
+            
+                <span class="type-signature"></span>terminate<span class="signature">()</span><span class="type-signature"></span>
+                
+            
+            <div class="container-source members">
+                <code><a href="Group.js.html">Group.js</a></code>,
+                <code><a href="Group.js.html#line112">line 112</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Tells the group and all subgroups to immediatly terminate
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -1310,7 +1545,7 @@
 <script src="scripts/linenumber.js"></script>
 
     <script>
-        var id = 'X12parser_sub'.replace(/"/g, '_');
+        var id = 'Group_sub'.replace(/"/g, '_');
         var selectedApi = document.getElementById(id); // do not use jquery selector
         var $selectedApi = $(selectedApi);
 

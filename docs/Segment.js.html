@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Source: X12parser.js | X12 EDI Parser</title>
+    <title>Source: Segment.js | X12 EDI Parser</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -48,135 +48,90 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const { Transform } = require('stream');
-const { StringDecoder } = require('string_decoder');
-const Segment = require('./Segment');
+            <pre class="prettyprint source linenums"><code>class Segment {
+    /**
+     * Creates a new segment object
+     * @param {string} raw The raw string of a segment in X12 format
+     * @param {object} delimiters An object of delimiters to be used to parse segment
+     */
+    constructor(raw, delimiters) {
+        this._delimiters = delimiters;
+        this._parsed = [];
+        this._name = '';
 
-class X12parser extends Transform {
-    /**
-     * Creates a new X12parser stream
-     * @param {string} defaultEncoding The encoding of the file
-     */
-    constructor(defaultEncoding = 'ascii') {
-        super({objectMode: true, defaultEncoding})
-        this._decoder = new StringDecoder(defaultEncoding);
-        this._firstLine = true;
-        this._leftOver = '';
-        this._delimiters = {
-            segment: '',
-            component: '',
-            element: '',
-            repetition: ''
-        }
-    }
-    
-    /**
-     * Do not directly use, this is called by readable stream methods when stream has finished
-     * @param {function} cb Execute cb when done flushing
-     */
-    _flush(cb) {
-        // Send whatever is left over into generator
-        const data = this.splitSegments(this._leftOver);
-        this.generateSegments(data);
-        cb();
+        this.parseSegment(raw);
     }
 
-    /**
-     * Node API for transform streams
-     * @param {object} chunk The next chunk of data from read stream
-     * @param {string} encoding The encoding of the chunk (e.g. UTF-8)
-     * @param {function} cb Callback indicating chunk was processed and ready for next chunk
-     */
-    _transform(chunk, encoding, cb) {
-        chunk = this._decoder.write(chunk);
+    /** @type {string[]} */
+    get parsed() {
+        return this._parsed;
+    }
 
-        this.processChunk(chunk);
-        cb();
+    /** @type {string} */
+    get name() {
+        return this._name;
+    }
+
+    get formatted() {
+        let formatted = {name: this._name};
+        this._parsed.forEach((element, elementIndex) => {
+            // First value is the initial value
+            formatted[`${elementIndex + 1}`] = element.splice(0,1)[0];
+
+            // Add components
+            element.forEach((component, componentIndex) => {
+                formatted[`${elementIndex + 1}-${componentIndex + 1}`] = component;
+            });
+        });
+
+        return formatted;
     }
 
     /**
-     * Creates segment objects and then pushes formatted data in stream
-     * @param {object[]} segments The array of segments to be pushed down the stream
+     * Removes uneeded chars from a string
+     * @param {string} string The string to be cleaned
+     * @returns {string} Cleaned version of string
      */
-    generateSegments(segments) {
-        segments.forEach(item => {
-            const segment = new Segment(item, { ...this._delimiters });
-            this.push(segment.formatted);
-        })
+    static cleanString(string) {
+        return string
+            .replace(/\n/g, '') // Remove new lines
+            .trim() // Remove white space
     }
 
     /**
-     * Attempts to auto detect the file delimiters
-     * @param {string} data The first string in the file
-     * TODO: Add additional validations here
+     * Processes an element and formats it
+     * @param {string} element The string inside the element
+     * @returns {string[]} A nested array of segments &amp; componenets
      */
-    static detectDelimiters(data) {
-        return {
-            segment: data[105],
-            component: data[104],
-            element: data[3],
-            repetition: data[82]
+    processElement(element) {
+        // If this is ISA we don't want to split on component
+        if(this._name === 'ISA') {
+            return [Segment.cleanString(element)];
+        } else {
+            return element
+                .split(this._delimiters.component)
+                .map(string => Segment.cleanString(string))
         }
     }
 
     /**
-     * Checks if there are any delimiters at the start or end of a string
-     * @param {string} chunk The raw string for from read stream
-     * @returns {string} String with delimiters removed
+     * Parses the segments and components into an array
+     * @param {string} rawData The segment string
+     * @param {object} delmiters An object with delimiters for this file
      */
-    removeDelimiters(chunk) {
-        let data = chunk;
-        if(data[0] === this._delimiters.segment) {
-            data = data.substring(1);
-        }
-        if(data[data.length -1] === this._delimiters.segment) {
-            data = data.substring(0, data.length - 1);
-        }
+    parseSegment(rawData) {
+        // Separate elements
+        const elements = rawData.split(this._delimiters.element);
 
-        return data;
-    }
+        // Extract name
+        this._name = Segment.cleanString(elements.splice(0, 1)[0]);
 
-    /**
-     * Splits up a string into an array of segments
-     * @param {string} rawString Full segment string from EDI file
-     * @returns {string[]} An array of segments
-     */
-    splitSegments(rawString) {
-        return rawString.split(this._delimiters.segment);
-    }
-
-    /**
-     * Processes one chunk of an X12 file
-     * @param {string} chunk The chunk from a read stream
-     */
-    processChunk(chunk) {
-        // Remove CRLF
-        let data = chunk.replace(/\r\n/g, "\n");
-
-        // Append any data held from last chunk
-        data = this._leftOver + data;
-
-        // If this is first line in the file try to set delimiters
-        if(this._firstLine) {
-            this._delimiters = X12parser.detectDelimiters(data);
-            this._firstLine = false;
-        }
-
-        // Make sure there are not delimiters at start or end of the string
-        data = this.removeDelimiters(data);
-
-        // Get array segments
-        const segments = this.splitSegments(data);
-
-        // Store last segment, it may not be a full segment and should be processed w/ next chunk
-        this._leftOver = segments.splice(-1, 1)[0];
-
-        // Generate and push data in stream
-        this.generateSegments(segments);
+        // Get formatted element w/ components
+        this._parsed = elements.map(element => this.processElement(element));
     }
 }
 
-module.exports = X12parser;</code></pre>
+module.exports = Segment;</code></pre>
         </article>
     </section>
 
