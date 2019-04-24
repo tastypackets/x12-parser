@@ -9,7 +9,7 @@
 - [X] Create Group class for handling grouping logic
 - [ ] Create validation class
 - [ ] Create validation unit tests
-- [ ] Consider adding multi root level groups to schema & grouoper
+- [ ] Consider adding multi root level groups to schema & grouper
 - [X] Create unit tests for Group class
 - [X] Create Grouper stream that uses Group class
 - [ ] Create Grouper stream unit tests
@@ -25,19 +25,19 @@ This lib is in development and this is a pre-release, it not recommended for use
 https://tastypackets.github.io/x12-parser/
 
 ## x12
-JavaScript EDI Parser that uses datastreams
+JavaScript EDI Parser that uses data streams
 
 ## Notes
 **All items below this are only for beta / development and will be replaced with proper documentation for release.**
-This lib does not enforce 2 charector segment & componenet names, it simply increments the number. For example `ISA01` would be `ISA1` in the output object and `ISA10` would still be `ISA10`. Similarly components such as `SVC01-01` would be `SVC1-1`.
+This lib does not enforce 2-character segment & component names, it simply increments the number. For example, `ISA01` would be `ISA1` in the output object and `ISA10` would still be `ISA10`. Similarly, components such as `SVC01-01` would be `SVC1-1`.
 
-If this becomes an issue for processing the 2 charector enforcement can be added, however it was dropped to reduce processing of each segment name.
+If this becomes an issue for processing the 2-character enforcement can be added, however it was dropped to reduce processing of each segment name.
 
 ## Validation
 TODO
 
 ## Grouping
-The grouping stage is another transform stream, it is designed to help grouop unbounded loops in the X12 files.
+The grouping stage is another transform stream, it is designed to help group unbounded loops in the X12 files.
 
 You must provide it a list of groups and what indicates the start / stop of a loop. If the loop in unbounded the stop is `null`.
 
@@ -45,7 +45,7 @@ Every group will be accumulated until another group starts, at which point the g
 
 If loop is unbounded it will be terminated by either another peer loop or it will be terminated by the closer of a bounded loop.
 
-Below is an example of grouping everything inside the ISA, however *this is not a good idea* for production. There is an unkown number of nested elements and it may have memory issues. It would be better in this case to group on something like the CLP lines.
+Below is an example of grouping everything inside the ISA, however **this is not a good idea** for production. There is an unknown number of nested elements and it may have memory issues. It would be better in this case to group on something like the CLP lines.
 
 ## Full Example - WIP
 ```javascript
