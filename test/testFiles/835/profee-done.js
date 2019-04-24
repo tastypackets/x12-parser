@@ -1050,9 +1050,8 @@ exports.groupedByISA = {
     ]
 }
 
-exports.groupedByISASchema = {
+exports.groupedByISASchema = { //TODO: This is no invalid, but need to update unit tests to correct
     "version": "005010X221A1", // What version of the transaction set this applies to
-    "transactionSet": "835", // The transaction set this applies to
     "groups": [ // An array of groups to create
         {
             "start": "ISA", // What segment starts the group
