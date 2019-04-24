@@ -1055,7 +1055,7 @@ exports.groupedByISASchema = { //TODO: This is no invalid, but need to update un
     "groups": [ // An array of groups to create
         {
             "start": "ISA", // What segment starts the group
-            "end": "ISE", // What segment ends the group
+            "end": "IEA", // What segment ends the group
             "name": "Envelope", // What is the name of the group
             "groups": [ // Nested groups
                 {
