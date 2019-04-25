@@ -1,7 +1,7 @@
 {
   "scripts": {
     "test": "mocha",
-    "docs": "jsdoc ./lib/X12parser.js -c jsdoc.json -r ./README.md"
+    "docs": "jsdoc -c jsdoc.json"
   },
   "dependencies": {},
   "name": "x12-parser",
