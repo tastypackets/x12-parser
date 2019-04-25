@@ -19,13 +19,20 @@
 - [ ] Create example end to end usage
 - [ ] Publish to NPM
 
+## Why are streams important?
+EDI files can be very large and, in some cases, may be transmitted with multiple transactions inside one file. With the unknown size of these files it's very easy for them to consume lots of RAM.
+
+Below are some rough examples, later this should be updated with more precise measurements.
+
+| File Size on Disk  | Numbe of Lines | No Grouping (RAM) | Group on CLP (RAM) | Group on ISA (RAM) |
+| ------------------ | -------------- | ----------------- | ------------------ | ------------------ |
+|       15.5MiB      |     565,832    |       47MiB       |        53MiB       |       294MiB       |
+|    Total Groups    |        -       |         0         |        20,166      |          1         |
+
 ## Beta
 This lib is in development and this is a pre-release, it not recommended for use in production at this time. There will likely be frequent breaking changes while in beta.
 
 https://tastypackets.github.io/x12-parser/
-
-## x12
-JavaScript EDI Parser that uses data streams
 
 ## Notes
 **All items below this are only for beta / development and will be replaced with proper documentation for release.**
