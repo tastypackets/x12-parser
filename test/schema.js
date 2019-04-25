@@ -1,7 +1,5 @@
 const { Schema } = require('../index');
 const assert = require('assert');
-// const { groupedByISASchema } = require('./testFiles/835/profee-done');
-// const { createReadStream } = require('fs');
 
 const schema = {
     "start": "CLP", // What segment starts the group

@@ -1050,38 +1050,33 @@ exports.groupedByISA = {
     ]
 }
 
-exports.groupedByISASchema = { //TODO: This is no invalid, but need to update unit tests to correct
-    "version": "005010X221A1", // What version of the transaction set this applies to
-    "groups": [ // An array of groups to create
+exports.groupedByISAschema = {
+    "start": "ISA", // What segment starts the group
+    "end": "IEA", // What segment ends the group
+    "name": "Envelope", // What is the name of the group
+    "groups": [ // Nested groups
         {
-            "start": "ISA", // What segment starts the group
-            "end": "IEA", // What segment ends the group
-            "name": "Envelope", // What is the name of the group
-            "groups": [ // Nested groups
+            "start": "BPR",
+            "terminators": ["N1"],
+            "name": "headers"
+        },
+        {
+            "start": "N1",
+            "terminators": ["LX"],
+            "name": "1000"
+        },
+        {
+            "start": "LX",
+            "name": "2000",
+            "terminators": ["SE"],
+            "groups": [
                 {
-                    "start": "BPR",
-                    "terminators": ["N1"],
-                    "name": "headers"
-                },
-                {
-                    "start": "N1",
-                    "terminators": ["LX"],
-                    "name": "1000"
-                },
-                {
-                    "start": "LX",
-                    "name": "2000",
-                    "terminators": ["SE"],
+                    "start": "CLP",
+                    "name": "2100",
                     "groups": [
                         {
-                            "start": "CLP",
-                            "name": "2100",
-                            "groups": [
-                                {
-                                    "start": "SVC",
-                                    "name": "2110",
-                                }
-                            ]
+                            "start": "SVC",
+                            "name": "2110",
                         }
                     ]
                 }
