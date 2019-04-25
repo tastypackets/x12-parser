@@ -12,7 +12,7 @@
 - [ ] Consider adding multi root level groups to schema & grouper
 - [X] Create unit tests for Group class
 - [X] Create Grouper stream that uses Group class
-- [ ] Create Grouper stream unit tests
+- [X] Create Grouper stream unit tests
 - [X] Create grouping stream
 - [X] Grouping unit test
 - [ ] End to end test (pipe)

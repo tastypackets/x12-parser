@@ -1,6 +1,6 @@
 const Group = require('../lib/Group');
 const assert = require('assert');
-const { groupedByISASchema, finished, groupedByISA } = require('./testFiles/835/profee-done');
+const { groupedByISAschema, finished, groupedByISA } = require('./testFiles/835/profee-done');
 
 describe('Group', function () {
     const clp = { '1': 'PATIENT ACCOUNT NUMBER', '2': '1', '3': '34.25', '4': '34.25', '5': '', '6': 'MC', '7': '1000210000000030', '8': '11', name: 'CLP'}
@@ -35,6 +35,7 @@ describe('Group', function () {
         ]
     }
 
+    // ! This was written assuming multi-root groups, which is not yet supported.
     const schema = {
         "version": "005010X221A1", // What version of the transaction set this applies to
         "start": 'ST', // What segment starts the group
@@ -101,7 +102,7 @@ describe('Group', function () {
             const callDone = group => {
                 assert.deepStrictEqual(group.data, groupedByISA);
             }
-            const myGroup = new Group(groupedByISASchema.groups[0], finished[0], callDone);
+            const myGroup = new Group(groupedByISAschema, finished[0], callDone);
             finished.forEach((item, index) => {
                 //Skip first index / ISA
                 if(index === 0)
