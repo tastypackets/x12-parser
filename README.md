@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/tastypackets/x12-parser.svg?branch=master)](https://travis-ci.org/tastypackets/x12-parser)
 
+jsdoc: https://tastypackets.github.io/x12-parser/
+
 # Initial release to-do list
 - [x] Create parser
 - [x] Create parser unit tests for 835s
@@ -24,15 +26,13 @@ EDI files can be very large and, in some cases, may be transmitted with multiple
 
 Below are some rough examples, later this should be updated with more precise measurements.
 
-| File Size on Disk  | Numbe of Lines | No Grouping (RAM) | Group on CLP (RAM) | Group on ISA (RAM) |
-| ------------------ | -------------- | ----------------- | ------------------ | ------------------ |
-|       15.5MiB      |     565,832    |       47MiB       |        53MiB       |       294MiB       |
-|    Total Groups    |        -       |         0         |        20,166      |          1         |
+|   File Size on Disk    | Numbe of Lines | No Grouping (RAM) | Group on CLP (RAM) | Group on ISA (RAM) |
+| ---------------------- | -------------- | ----------------- | ------------------ | ------------------ |
+|         15.5MiB        |     565,832    |       47MiB       |        53MiB       |       294MiB       |
+| Objects exiting stream |        -       |      565,832      |        20,166      |          1         |
 
 ## Beta
 This lib is in development and this is a pre-release, it not recommended for use in production at this time. There will likely be frequent breaking changes while in beta.
-
-https://tastypackets.github.io/x12-parser/
 
 ## Notes
 **All items below this are only for beta / development and will be replaced with proper documentation for release.**
