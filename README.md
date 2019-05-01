@@ -27,7 +27,7 @@ Below are some rough examples, later this should be updated with more precise me
 |         15.5MiB        |     565,832     |       47MiB       |        53MiB       |       294MiB       |
 | Objects exiting stream |        -        |      565,832      |        20,166      |          1         |
 
-## Examples usage
+## Example usage
 `yarn add x12-parser` or `npm install x12-parser`
 
 The X12parser is a Node Transform Stream, so you must pipe a read stream to it. The simplest and most common way to do this is using `fs.createReadStream` in NodeJS, however you should be able to use other read streams as long as they are sending the data unmodified from the source file. If you need to control the encoding you can pass `defaultEncoding` to the X12parser, for example `X12parser('utf8')`.
