@@ -1,21 +1,6 @@
 [![Build Status](https://travis-ci.org/tastypackets/x12-parser.svg?branch=master)](https://travis-ci.org/tastypackets/x12-parser)
 
-# Beta release
-This is the beta release of this lib, currently it's only suggested you use the X12parser directly. It is planned to do a full rewrite of the grouper to handle proper X12 schema designs in v2, which will also support a validation process for the files. This early release is being done to help detect bugs and get the parser into devs hands immediately.
-
 jsdoc documentation: https://tastypackets.github.io/x12-parser/
-
-*The X12grouper is available as an export, but it's not recommended for use.*
-
-# V2 Planned Changes
-- [ ] Create specific classes for all objects
-- [ ] Create a new Grouper that will evaluate loop repeat indicators
-- [ ] Create a new X12schema class that will validate and make schema creation easier
-- [ ] Create a validation class
-- [ ] Create an automated process for setting up grouping & validation based on 1 schema
-- [ ] Add new unit tests using many different types of X12 files - **Help wanted locating and describing different X12 files**
-
-To support additional validation and grouping the new X12schema class will read the schema and determine custom holds that need to be added to the data stream. This would allow a dev to easily group ISA, GS, GE, and IEA segments together and validate the information in them, without needing to write a group stage to merge this data. This is currently highly experimental and as such is planned for a larger v2 update.
 
 ## Why are streams important?
 EDI files can be very large and may be transmitted with multiple transactions inside one file. With the unknown size of these files it's very easy for them to consume lots of RAM.
@@ -157,3 +142,15 @@ testFile.pipe(myParser).pipe(myGrouper).on('data', data => {
     console.log(data)
 })
 ```
+
+*The X12grouper is available as an export, but it's not recommended for use.*
+
+# V2 Planned Changes
+- [ ] Create specific classes for all objects
+- [ ] Create a new Grouper that will evaluate loop repeat indicators
+- [ ] Create a new X12schema class that will validate and make schema creation easier
+- [ ] Create a validation class
+- [ ] Create an automated process for setting up grouping & validation based on 1 schema
+- [ ] Add new unit tests using many different types of X12 files - **Help wanted locating and describing different X12 files**
+
+To support additional validation and grouping the new X12schema class will read the schema and determine custom holds that need to be added to the data stream. This would allow a dev to easily group ISA, GS, GE, and IEA segments together and validate the information in them, without needing to write a group stage to merge this data. This is currently highly experimental and as such is planned for a larger v2 update.
