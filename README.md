@@ -2,6 +2,9 @@
 
 jsdoc documentation: https://tastypackets.github.io/x12-parser/
 
+## Description
+An X12 parser built using the NodeJS stream API, which can handle very large files and significantly improves processing time by reducing RAM usage. This parser was built using only JS and native NodeJS APIs, the only dependencies in use are dev dependencies for documentation and testing.
+
 ## Why are streams important?
 EDI files can be very large and may be transmitted with multiple transactions inside one file. With the unknown size of these files it's very easy for them to consume lots of RAM.
 
