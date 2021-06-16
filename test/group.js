@@ -6,7 +6,7 @@ const {
   groupedByISA,
 } = require('./testFiles/835/profee-done');
 
-describe('Group', function () {
+describe('Group', () => {
   const clp = {
     1: 'PATIENT ACCOUNT NUMBER',
     2: '1',
@@ -133,14 +133,14 @@ describe('Group', function () {
     ],
   };
 
-  describe('#constructor()', function () {
-    it('Should return an instance of group', function () {
+  describe('#constructor()', () => {
+    it('Should return an instance of group', () => {
       const myGroup = new Group(schema.groups[1], clp, () => {});
       assert(myGroup instanceof Group);
     });
   });
-  describe('#terminate()', function () {
-    it('Should execute cb with grouped data', function () {
+  describe('#terminate()', () => {
+    it('Should execute cb with grouped data', () => {
       const callDone = (group) => {
         assert(group instanceof Group);
         assert.deepStrictEqual(group.data, {
@@ -152,8 +152,8 @@ describe('Group', function () {
       myGroup.terminate();
     });
   });
-  describe('#add()', function () {
-    it('Should group nested data', function () {
+  describe('#add()', () => {
+    it('Should group nested data', () => {
       const callDone = (group) => {
         assert.deepStrictEqual(group.data, grouped);
       };
@@ -163,7 +163,7 @@ describe('Group', function () {
       });
       myGroup.terminate();
     });
-    it('Should be able to group multiple nested groups', function () {
+    it('Should be able to group multiple nested groups', () => {
       const callDone = (group) => {
         assert.deepStrictEqual(group.data, groupedByISA);
       };

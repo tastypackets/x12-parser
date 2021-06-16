@@ -2,25 +2,25 @@ const { X12parser } = require('../index');
 const assert = require('assert');
 const { createReadStream } = require('fs');
 
-describe('X12parser', function () {
-  describe('#constructor()', function () {
+describe('X12parser', () => {
+  describe('#constructor()', () => {
     const myParser = new X12parser();
-    it('Should return an X12parser', function () {
+    it('Should return an X12parser', () => {
       assert(myParser instanceof X12parser);
     });
-    it('Should have a pipe function', function () {
+    it('Should have a pipe function', () => {
       assert.strictEqual(typeof myParser.pipe, 'function');
     });
-    it('Should return an event emitter', function () {
+    it('Should return an event emitter', () => {
       assert(myParser instanceof require('events').EventEmitter);
     });
   });
-  describe('#detectDelimiters()', function () {
+  describe('#detectDelimiters()', () => {
     const isa1 =
       'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:~';
     const isa2 =
       'ISA&00&          &00&          &ZZ&EMEDNYBAT      &ZZ&ETIN           &100101&1000&#&00501&006000600&0&T&@$';
-    it('Should be abl to auto detect delimiters from ISA', function () {
+    it('Should be abl to auto detect delimiters from ISA', () => {
       assert.deepEqual(X12parser.detectDelimiters(isa1), {
         segment: '~',
         component: ':',
@@ -35,7 +35,7 @@ describe('X12parser', function () {
       });
     });
   });
-  describe('#removeDelimiters()', function () {
+  describe('#removeDelimiters()', () => {
     const myParser = new X12parser();
     myParser._delimiters = {
       segment: '~',
@@ -52,18 +52,18 @@ describe('X12parser', function () {
 
     const delimitersRemoved =
       'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:';
-    it('Should remove delimiter from start of string', function () {
+    it('Should remove delimiter from start of string', () => {
       assert.deepEqual(myParser.removeDelimiters(isa1), delimitersRemoved);
     });
-    it('Should remove delimiter from end of string', function () {
+    it('Should remove delimiter from end of string', () => {
       assert.deepEqual(myParser.removeDelimiters(isa2), delimitersRemoved);
     });
-    it('Should remove delimiter from start and end of string', function () {
+    it('Should remove delimiter from start and end of string', () => {
       assert.deepEqual(myParser.removeDelimiters(isa3), delimitersRemoved);
     });
   });
-  describe('835 File Tests', function () {
-    it('Should parse files with CRLF', function () {
+  describe('835 File Tests', () => {
+    it('Should parse files with CRLF', () => {
       const myParser = new X12parser();
       const testFile = createReadStream('./test/testFiles/835/profee.edi');
       let counter = 0; // So ugly... This should be done nicer
@@ -73,7 +73,7 @@ describe('X12parser', function () {
         counter++;
       });
     });
-    it('Should parse single line files', function () {
+    it('Should parse single line files', () => {
       const myParser = new X12parser();
       const testFile = createReadStream(
         './test/testFiles/835/profeeOneLine.edi'
@@ -85,7 +85,7 @@ describe('X12parser', function () {
         counter++;
       });
     });
-    it('Should parse multiple transactions (ISA) in a single file', function () {
+    it('Should parse multiple transactions (ISA) in a single file', () => {
       const myParser = new X12parser();
       const testFile = createReadStream(
         './test/testFiles/835/profeeMultiple.edi'
@@ -101,7 +101,7 @@ describe('X12parser', function () {
         counter++;
       });
     });
-    it('Should parse multiline files without delimiter (LF/CRLF is delimiter)', function () {
+    it('Should parse multiline files without delimiter (LF/CRLF is delimiter)', () => {
       const myParser = new X12parser();
       const testFile = createReadStream(
         './test/testFiles/835/multiLineNotDelimited.edi'
