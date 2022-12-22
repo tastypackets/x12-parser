@@ -1,6 +1,7 @@
 const { X12parser } = require('../index');
 const assert = require('assert');
 const { createReadStream } = require('fs');
+const {finished} = require("./testFiles/835/profee-done");
 
 describe('X12parser', () => {
   describe('#constructor()', () => {
@@ -108,6 +109,17 @@ describe('X12parser', () => {
       );
       let counter = 0; // So ugly... This should be done nicer
       const { finished } = require('./testFiles/835/profee-done');
+      testFile.pipe(myParser).on('data', (data) => {
+        assert.deepStrictEqual(data, finished[counter]);
+        counter++;
+      });
+    });
+    it("Should parse correctly when segment aligns with chunk size", () => {
+      const myParser = new X12parser();
+      const testFile = createReadStream('./test/testFiles/835/profee.edi', { highWaterMark: 291 });
+      let counter = 0; // So ugly... This should be done nicer
+      const { finished } = require('./testFiles/835/profee-done');
+
       testFile.pipe(myParser).on('data', (data) => {
         assert.deepStrictEqual(data, finished[counter]);
         counter++;
