@@ -15,6 +15,7 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
+    "eslint": "^8.30.0",
     "jsdoc": "^3.6.7",
     "mocha": "^6.2.3",
     "tui-jsdoc-template": "^1.2.2"
