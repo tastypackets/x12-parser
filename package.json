@@ -16,7 +16,7 @@
   "devDependencies": {
     "eslint": "^8.39.0",
     "jsdoc": "^3.6.7",
-    "mocha": "^6.2.3",
+    "mocha": "^10.2.0",
     "prettier": "^2.8.7",
     "tui-jsdoc-template": "^1.2.2"
   },
