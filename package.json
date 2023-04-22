@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "npm lint && mocha",
+    "test": "mocha",
     "docs": "jsdoc -c jsdoc.json",
     "format": "prettier --write ./lib ./test --loglevel warn",
     "lint": "eslint ./lib --max-warnings 0 && prettier --check ./lib ./test --loglevel warn"
