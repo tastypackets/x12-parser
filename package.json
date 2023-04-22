@@ -1,11 +1,10 @@
 {
   "scripts": {
-    "test": "yarn lint && mocha",
+    "test": "npm lint && mocha",
     "docs": "jsdoc -c jsdoc.json",
-    "format": "prettier --write ./lib ./test",
-    "lint": "eslint ./lib --max-warnings 0"
+    "format": "prettier --write ./lib ./test --loglevel warn",
+    "lint": "eslint ./lib --max-warnings 0 && prettier --check ./lib ./test --loglevel warn"
   },
-  "dependencies": {},
   "name": "x12-parser",
   "version": "1.0.2",
   "description": "NodeJS X12 parser using streams",
@@ -15,8 +14,10 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
+    "eslint": "^8.39.0",
     "jsdoc": "^3.6.7",
     "mocha": "^6.2.3",
+    "prettier": "^2.8.7",
     "tui-jsdoc-template": "^1.2.2"
   },
   "bugs": {
