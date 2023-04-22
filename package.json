@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "test": "mocha",
+    "test": "vitest ./test",
+    "test:coverage": "vitest run --coverage ./test",
     "docs": "jsdoc -c jsdoc.json",
     "format": "prettier --write ./lib ./test --loglevel warn",
     "lint": "eslint ./lib --max-warnings 0 && prettier --check ./lib ./test --loglevel warn"
@@ -8,17 +9,19 @@
   "name": "x12-parser",
   "version": "1.0.2",
   "description": "NodeJS X12 parser using streams",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": "https://github.com/tastypackets/x12-parser",
   "author": "Ezekiel Keator <20361796+tastypackets@users.noreply.github.com>",
   "license": "MIT",
   "private": false,
   "devDependencies": {
+    "@vitest/coverage-c8": "^0.30.1",
     "eslint": "^8.39.0",
     "jsdoc": "^3.6.7",
-    "mocha": "^6.2.3",
     "prettier": "^2.8.7",
-    "tui-jsdoc-template": "^1.2.2"
+    "tui-jsdoc-template": "^1.2.2",
+    "typescript": "^5.0.4",
+    "vitest": "^0.30.1"
   },
   "bugs": {
     "url": "https://github.com/tastypackets/x12-parser/issues"

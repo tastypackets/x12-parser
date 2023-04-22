@@ -1,4 +1,4 @@
-const Segment = require('../lib/Segment');
+const Segment = require('../lib/Segment.js');
 const assert = require('assert');
 
 describe('Segment', () => {

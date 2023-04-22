@@ -1,4 +1,4 @@
-const { X12parser } = require('../index');
+const { X12parser } = require('../lib/index.js');
 const assert = require('assert');
 const { createReadStream } = require('fs');
 
