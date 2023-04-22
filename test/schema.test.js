@@ -1,4 +1,4 @@
-const { Schema } = require('../index');
+const { Schema } = require('../lib/index.js');
 const assert = require('assert');
 
 const schema = {

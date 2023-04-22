@@ -1,4 +1,4 @@
-const { X12grouper, Schema } = require('../index');
+const { X12grouper, Schema } = require('../lib/index.js');
 const assert = require('assert');
 const { finished } = require('./testFiles/835/profee-done');
 
