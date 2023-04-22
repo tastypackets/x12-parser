@@ -48,5 +48,8 @@
       "node": true,
       "es6": true
     }
+  },
+  "volta": {
+    "node": "18.16.0"
   }
 }
