@@ -46,18 +46,24 @@ describe('X12grouper', () => {
       tmpGrouper.write(finished[0]); // ISA
       assert.deepStrictEqual(tmpGrouper._initialHold[0], finished[0]);
     });
-    it('Items in initial hold should come down pipe before new segment', () => {
-      // ISA -> Hold
-      // GS -> Process Hold (ISA) -> Process GS
-      const tmpGrouper = new X12grouper(testSchema);
-      let counter = 0;
-      tmpGrouper.on('data', (data: (typeof finished)[number]) => {
-        assert.deepStrictEqual(finished[counter], data);
-        counter++;
-      });
-      tmpGrouper.write(finished[0]); // ISA
-      tmpGrouper.write(finished[1]); // GS
-    });
+    it('Items in initial hold should come down pipe before new segment', async () =>
+      new Promise<void>((done) => {
+        // ISA -> Hold
+        // GS -> Process Hold (ISA) -> Process GS
+        const tmpGrouper = new X12grouper(testSchema);
+        let counter = 0;
+        tmpGrouper.on('data', (data: (typeof finished)[number]) => {
+          assert.deepStrictEqual(finished[counter], data);
+          counter++;
+
+          // Just hacking this on until full test file refactor
+          if (counter === 2) {
+            done();
+          }
+        });
+        tmpGrouper.write(finished[0]); // ISA
+        tmpGrouper.write(finished[1]); // GS
+      }));
   });
   describe('Schema detection', () => {
     it('Should set the version to GS08', () => {
