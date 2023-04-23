@@ -2,7 +2,7 @@
 
 This branch is for active work on V2, it is not ready to be published!
 
-- [x] Create specific classes for all objects
+- [x] Convert all files to TS
 - [ ] Add TS build step
 - [x] Add TS linting rules
 - [ ] Refactor and modernize all tests
