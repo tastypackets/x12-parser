@@ -1,5 +1,4 @@
-import { X12grouper, Schema } from '../lib/index.js';
-// @ts-expect-error
+import { X12grouper, Schema } from '@/index';
 import { finished } from './testFiles/835/profee-done';
 
 const schema = {
@@ -33,18 +32,18 @@ describe('X12grouper', () => {
     });
     it('Should accept a single schema object', () => {
       const tmpGrouper = new X12grouper(testSchema);
-      assert.deepStrictEqual(tmpGrouper._schemas, [testSchema]);
+      assert.deepStrictEqual(tmpGrouper.schemas, [testSchema]);
     });
     it('Should accept an array of schemas', () => {
       const tmpGrouper = new X12grouper([testSchema, testSchema2]);
-      assert.deepStrictEqual(tmpGrouper._schemas, [testSchema, testSchema2]);
+      assert.deepStrictEqual(tmpGrouper.schemas, [testSchema, testSchema2]);
     });
   });
   describe('#processSegment()', () => {
     it('ISA should go into an intial hold', () => {
       const tmpGrouper = new X12grouper(testSchema);
       tmpGrouper.write(finished[0]); // ISA
-      assert.deepStrictEqual(tmpGrouper._initialHold[0], finished[0]);
+      assert.deepStrictEqual(tmpGrouper.initialHold[0], finished[0]);
     });
     it('Items in initial hold should come down pipe before new segment', async () =>
       new Promise<void>((done) => {
@@ -69,50 +68,46 @@ describe('X12grouper', () => {
     it('Should set the version to GS08', () => {
       const tmpGrouper = new X12grouper([testSchema, testSchema2]);
       tmpGrouper.write(finished[1]);
-      assert.strictEqual(tmpGrouper._version, '005010X221A1');
+      assert.strictEqual(tmpGrouper.activeVersion, '005010X221A1');
       tmpGrouper.write({ ...finished[1], 8: '005010X221' });
-      assert.strictEqual(tmpGrouper._version, '005010X221');
+      assert.strictEqual(tmpGrouper.activeVersion, '005010X221');
     });
     it('The first schema marked as default will be the default schema', () => {
       const tmpGrouper = new X12grouper([testSchema2, testSchema]);
-      assert.deepStrictEqual(tmpGrouper._defaultSchema, testSchema);
+      assert.deepStrictEqual(tmpGrouper.defaultSchema, testSchema);
     });
     it('If no schemas are marked as the default the first schema will be used as default', () => {
       const tmpGrouper = new X12grouper([
         testSchema2,
         new Schema('005010X221A1', schema),
       ]);
-      assert.deepStrictEqual(tmpGrouper._defaultSchema, testSchema2);
+      assert.deepStrictEqual(tmpGrouper.defaultSchema, testSchema2);
     });
     it('If there is a schema version that matches GS08 it will be used', () => {
       const tmpSchema = new Schema('005010X221A1', { ...schema, name: 'test' });
       const tmpGrouper = new X12grouper([testSchema2, tmpSchema]);
       tmpGrouper.write(finished[1]); // GS
       tmpGrouper.write(finished[14]); // CLP
-      // @ts-expect-error - Just used for testing, ok if it's possibly null
-      assert.strictEqual(tmpGrouper._activeGroup._schema.name, 'test');
+      assert.strictEqual(tmpGrouper.activeGroup!.schema.name, 'test');
     });
     it('If there is no schema version that matches GS08 the default will be used', () => {
       const tmpSchema = new Schema('random', { ...schema, name: 'test' });
       const tmpGrouper = new X12grouper([testSchema2, tmpSchema]);
       tmpGrouper.write(finished[1]); // GS
       tmpGrouper.write(finished[14]); // CLP
-      // @ts-expect-error - Just used for testing, ok if it's possibly null
-      assert.strictEqual(tmpGrouper._activeGroup._schema.name, '2100');
+      assert.strictEqual(tmpGrouper.activeGroup!.schema.name, '2100');
     });
     it('If segment is GS it will update the version and use new schema', () => {
       const tmpSchema = new Schema('005010X221A1', { ...schema, name: 'test' });
       const tmpGrouper = new X12grouper([testSchema2, tmpSchema]);
       tmpGrouper.write(finished[1]); // GS - 005010X221A1
       tmpGrouper.write(finished[14]); // CLP
-      assert.strictEqual(tmpGrouper._version, '005010X221A1');
-      // @ts-expect-error - Just used for testing, ok if it's possibly null
-      assert.strictEqual(tmpGrouper._activeGroup._schema.name, 'test');
+      assert.strictEqual(tmpGrouper.activeVersion, '005010X221A1');
+      assert.strictEqual(tmpGrouper.activeGroup!.schema.name, 'test');
       tmpGrouper.write({ ...finished[1], 8: '005010X221' }); // GS
       tmpGrouper.write(finished[14]); // CLP
-      assert.strictEqual(tmpGrouper._version, '005010X221');
-      // @ts-expect-error - Just used for testing, ok if it's possibly null
-      assert.strictEqual(tmpGrouper._activeGroup._schema.name, '2100');
+      assert.strictEqual(tmpGrouper.activeVersion, '005010X221');
+      assert.strictEqual(tmpGrouper.activeGroup!.schema.name, '2100');
     });
   });
 });

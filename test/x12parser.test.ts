@@ -1,6 +1,5 @@
-import { X12parser } from '../lib/index.js';
+import { X12parser } from '@/index';
 import { createReadStream } from 'node:fs';
-// @ts-expect-error
 import { finished } from './testFiles/835/profee-done';
 
 describe('X12parser', () => {
@@ -43,12 +42,11 @@ describe('X12parser', () => {
 
   describe('removeDelimiters()', () => {
     const myParser = new X12parser();
-    myParser._delimiters = {
-      segment: '~',
-      component: ':',
-      element: '*',
-      repetition: '^',
-    };
+    // Pass an initial data w/ GS to detect delimiters
+    myParser.write(
+      'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:~GS*HP*EMEDNYBAT*ETIN*20100101*1050*6000600*X*005010X221A1~'
+    );
+
     const isa1 =
       '~ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:';
     const isa2 =
