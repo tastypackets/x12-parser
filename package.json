@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "vitest ./test",
+    "test": "vitest",
     "test:coverage": "vitest run --coverage ./test",
     "docs": "jsdoc -c jsdoc.json",
     "format": "prettier --write ./lib ./test --loglevel warn",

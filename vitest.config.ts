@@ -12,10 +12,11 @@ export default defineConfig({
       extension: ['.js'],
       // Apply current coverage levels to prevent drops
       // TODO: So close to 100%
-      lines: 90,
-      statements: 84,
-      branches: 94,
-      functions: 84,
+      lines: 98,
+      statements: 97,
+      branches: 95,
+      functions: 97,
     },
+    mockReset: true,
   },
 });
