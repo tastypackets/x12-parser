@@ -1,4 +1,6 @@
-exports.finished = [
+import type { FormattedSegment, GroupOrSegment, GroupShape } from 'types';
+
+export const finished: FormattedSegment[] = [
   {
     1: '00',
     2: '',
@@ -478,8 +480,9 @@ exports.finished = [
   },
 ];
 
-exports.groupedByISA = {
+export const groupedByISA: GroupOrSegment = {
   name: 'Envelope',
+  isGroup: true,
   data: [
     {
       1: '00',
@@ -518,6 +521,7 @@ exports.groupedByISA = {
     },
     {
       name: 'headers',
+      isGroup: true,
       data: [
         {
           1: 'I',
@@ -558,6 +562,7 @@ exports.groupedByISA = {
     },
     {
       name: '1000',
+      isGroup: true,
       data: [
         {
           1: 'PR',
@@ -588,6 +593,7 @@ exports.groupedByISA = {
     },
     {
       name: '1000',
+      isGroup: true,
       data: [
         {
           1: 'PE',
@@ -605,6 +611,7 @@ exports.groupedByISA = {
     },
     {
       name: '2000',
+      isGroup: true,
       data: [
         {
           1: '1',
@@ -612,6 +619,7 @@ exports.groupedByISA = {
         },
         {
           name: '2100',
+          isGroup: true,
           data: [
             {
               1: 'PATIENT ACCOUNT NUMBER',
@@ -665,6 +673,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -690,6 +699,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -715,6 +725,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -740,6 +751,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -762,6 +774,7 @@ exports.groupedByISA = {
         },
         {
           name: '2100',
+          isGroup: true,
           data: [
             {
               1: 'PATIENT ACCOUNT NUMBER',
@@ -810,6 +823,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -835,6 +849,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -862,6 +877,7 @@ exports.groupedByISA = {
         },
         {
           name: '2100',
+          isGroup: true,
           data: [
             {
               1: 'PATIENT ACCOUNT NUMBER',
@@ -915,6 +931,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -940,6 +957,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -965,6 +983,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -996,6 +1015,7 @@ exports.groupedByISA = {
             },
             {
               name: '2110',
+              isGroup: true,
               data: [
                 {
                   1: 'HC',
@@ -1046,7 +1066,7 @@ exports.groupedByISA = {
   ],
 };
 
-exports.groupedByISAschema = {
+export const groupedByISAschema: GroupShape = {
   start: 'ISA', // What segment starts the group
   end: 'IEA', // What segment ends the group
   name: 'Envelope', // What is the name of the group

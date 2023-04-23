@@ -8,8 +8,8 @@ export default defineConfig({
     coverage: {
       provider: 'c8',
       all: true,
-      exclude: ['docs', 'test'],
-      extension: ['.js'],
+      exclude: ['docs', 'test', 'vitest.config.ts'],
+      extension: ['.ts'],
       // Apply current coverage levels to prevent drops
       // TODO: So close to 100%
       lines: 90,
@@ -18,5 +18,8 @@ export default defineConfig({
       functions: 90,
     },
     mockReset: true,
+    alias: {
+      '@/': './lib/',
+    },
   },
 });

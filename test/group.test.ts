@@ -1,131 +1,126 @@
-import Group from '../lib/Group';
+import { Group } from '@/Group';
+import type { FormattedSegment, GroupData, GroupShape } from '@/types';
 import {
   groupedByISAschema,
   finished,
   groupedByISA,
-  // @ts-expect-error
 } from './testFiles/835/profee-done';
 
 describe('Group', () => {
-  const clp = {
-    1: 'PATIENT ACCOUNT NUMBER',
-    2: '1',
-    3: '34.25',
-    4: '34.25',
-    5: '',
-    6: 'MC',
-    7: '1000210000000030',
-    8: '11',
+  const clp: FormattedSegment = {
+    '1': 'PATIENT ACCOUNT NUMBER',
+    '2': '1',
+    '3': '34.25',
+    '4': '34.25',
+    '5': '',
+    '6': 'MC',
+    '7': '1000210000000030',
+    '8': '11',
     name: 'CLP',
   };
-  const svcArray = [
+  const svcArray: FormattedSegment[] = [
     {
-      1: 'HC',
-      2: '6',
-      3: '6',
-      4: '',
-      5: '1',
+      '1': 'HC',
+      '2': '6',
+      '3': '6',
+      '4': '',
+      '5': '1',
       name: 'SVC',
       '1-1': 'V2020',
       '1-2': 'RB',
     },
-    { 1: '472', 2: '20100101', name: 'DTM' },
-    { 1: 'B6', 2: '6', name: 'AMT' },
+    { '1': '472', '2': '20100101', name: 'DTM' },
+    { '1': 'B6', '2': '6', name: 'AMT' },
     {
-      1: 'HC',
-      2: '2.75',
-      3: '2.75',
-      4: '',
-      5: '1',
+      '1': 'HC',
+      '2': '2.75',
+      '3': '2.75',
+      '4': '',
+      '5': '1',
       name: 'SVC',
       '1-1': 'V2700',
       '1-2': 'RB',
     },
-    { 1: '472', 2: '20100101', name: 'DTM' },
-    { 1: 'B6', 2: '2.75', name: 'AMT' },
+    { '1': '472', '2': '20100101', name: 'DTM' },
+    { '1': 'B6', '2': '2.75', name: 'AMT' },
   ];
-  const grouped = {
+  const grouped: GroupData = {
     name: '2100',
+    isGroup: true,
     data: [
       {
-        1: 'PATIENT ACCOUNT NUMBER',
-        2: '1',
-        3: '34.25',
-        4: '34.25',
-        5: '',
-        6: 'MC',
-        7: '1000210000000030',
-        8: '11',
+        '1': 'PATIENT ACCOUNT NUMBER',
+        '2': '1',
+        '3': '34.25',
+        '4': '34.25',
+        '5': '',
+        '6': 'MC',
+        '7': '1000210000000030',
+        '8': '11',
         name: 'CLP',
       },
       {
         name: '2110',
+        isGroup: true,
         data: [
           {
-            1: 'HC',
-            2: '6',
-            3: '6',
-            4: '',
-            5: '1',
+            '1': 'HC',
+            '2': '6',
+            '3': '6',
+            '4': '',
+            '5': '1',
             name: 'SVC',
             '1-1': 'V2020',
             '1-2': 'RB',
           },
-          { 1: '472', 2: '20100101', name: 'DTM' },
-          { 1: 'B6', 2: '6', name: 'AMT' },
+          { '1': '472', '2': '20100101', name: 'DTM' },
+          { '1': 'B6', '2': '6', name: 'AMT' },
         ],
       },
       {
         name: '2110',
+        isGroup: true,
         data: [
           {
-            1: 'HC',
-            2: '2.75',
-            3: '2.75',
-            4: '',
-            5: '1',
+            '1': 'HC',
+            '2': '2.75',
+            '3': '2.75',
+            '4': '',
+            '5': '1',
             name: 'SVC',
             '1-1': 'V2700',
             '1-2': 'RB',
           },
-          { 1: '472', 2: '20100101', name: 'DTM' },
-          { 1: 'B6', 2: '2.75', name: 'AMT' },
+          { '1': '472', '2': '20100101', name: 'DTM' },
+          { '1': 'B6', '2': '2.75', name: 'AMT' },
         ],
       },
     ],
   };
 
-  // ! This was written assuming multi-root groups, which is not yet supported.
-  const schema = {
-    version: '005010X221A1', // What version of the transaction set this applies to
-    start: 'ST', // What segment starts the group
-    name: 'Transaction', // What is the name of the group
-    end: 'SE', // Closes all nested groups when this is detected
+  const schema: GroupShape = {
+    start: 'ST',
+    name: 'Transaction',
+    end: 'SE',
     groups: [
-      // An array of groups to create
       {
-        start: 'N1', // What segment starts the group
-        end: null, // What segment ends the group
-        name: '1000', // What is the name of the group
+        start: 'N1',
+        name: '1000',
         terminators: ['N1', 'LX'],
         groups: [
-          // Nested groups
           {
             start: 'N1',
-            end: null,
             name: '1000B',
           },
         ],
-      }, // -- At this point group 1000A would be pushed down the data stream before starting loop 2000
+      },
       {
         start: 'CLP',
-        end: null,
         name: '2100',
         terminators: ['CLP'],
         groups: [
           {
             start: 'SVC',
-            end: null,
             name: '2110',
           },
         ],
@@ -135,7 +130,7 @@ describe('Group', () => {
 
   describe('#constructor()', () => {
     it('Should return an instance of group', () => {
-      const myGroup = new Group(schema.groups[1], clp, () => {});
+      const myGroup = new Group(schema.groups![1], clp, () => {});
       assert(myGroup instanceof Group);
     });
   });
@@ -146,9 +141,10 @@ describe('Group', () => {
         assert.deepStrictEqual(group.data, {
           name: '2100',
           data: [{ ...clp }],
+          isGroup: true,
         });
       };
-      const myGroup = new Group(schema.groups[1], clp, callDone);
+      const myGroup = new Group(schema.groups![1], clp, callDone);
       myGroup.terminate();
     });
   });
@@ -157,7 +153,7 @@ describe('Group', () => {
       const callDone = (group: Group) => {
         assert.deepStrictEqual(group.data, grouped);
       };
-      const myGroup = new Group(schema.groups[1], clp, callDone);
+      const myGroup = new Group(schema.groups![1], clp, callDone);
       svcArray.forEach((svc) => {
         assert.strictEqual(myGroup.add(svc), true);
       });
@@ -168,7 +164,7 @@ describe('Group', () => {
         assert.deepStrictEqual(group.data, groupedByISA);
       };
       const myGroup = new Group(groupedByISAschema, finished[0], callDone);
-      finished.forEach((item: object, index: number) => {
+      finished.forEach((item, index) => {
         //Skip first index / ISA
         if (index === 0) return;
 

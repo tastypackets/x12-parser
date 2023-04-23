@@ -1,4 +1,4 @@
-import { Schema } from '../lib/index.js';
+import { Schema } from '@/index';
 
 const schema = {
   start: 'CLP', // What segment starts the group

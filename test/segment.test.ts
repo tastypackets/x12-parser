@@ -1,4 +1,4 @@
-import Segment from '../lib/Segment.js';
+import { Segment } from '@/Segment';
 
 describe('Segment', () => {
   const delimiters = {
