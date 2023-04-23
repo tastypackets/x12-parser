@@ -1,5 +1,6 @@
 export = X12parser;
-declare class X12parser {
+import type { Transform } from 'stream';
+declare class X12parser extends Transform {
   /**
    * Attempts to auto detect the file delimiters
    * @param {string} data The first string in the file

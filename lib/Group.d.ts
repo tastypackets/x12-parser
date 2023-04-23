@@ -1,4 +1,5 @@
 export = Group;
+import Schema from './Schema';
 declare class Group {
   /**
    * Creates a new segment object
@@ -7,11 +8,11 @@ declare class Group {
    * @param {function} terminateCB Function to execute when group is closed
    */
   constructor(schema: any, segment: any, terminateCB: Function);
-  _schema: any;
-  _name: any;
-  _end: any;
+  _schema: Schema;
+  _name: string;
+  _end: string | null;
   _groups: any;
-  _terminators: any[];
+  _terminators: string[];
   _groupHolds: any[];
   _segmentsHolds: any[];
   _terminatedGroups: any[];

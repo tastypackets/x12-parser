@@ -1,10 +1,10 @@
-const Group = require('../lib/Group');
-const assert = require('assert');
-const {
+import Group from '../lib/Group';
+import {
   groupedByISAschema,
   finished,
   groupedByISA,
-} = require('./testFiles/835/profee-done');
+  // @ts-expect-error
+} from './testFiles/835/profee-done';
 
 describe('Group', () => {
   const clp = {
@@ -141,7 +141,7 @@ describe('Group', () => {
   });
   describe('#terminate()', () => {
     it('Should execute cb with grouped data', () => {
-      const callDone = (group) => {
+      const callDone = (group: Group) => {
         assert(group instanceof Group);
         assert.deepStrictEqual(group.data, {
           name: '2100',
@@ -154,7 +154,7 @@ describe('Group', () => {
   });
   describe('#add()', () => {
     it('Should group nested data', () => {
-      const callDone = (group) => {
+      const callDone = (group: Group) => {
         assert.deepStrictEqual(group.data, grouped);
       };
       const myGroup = new Group(schema.groups[1], clp, callDone);
@@ -164,11 +164,11 @@ describe('Group', () => {
       myGroup.terminate();
     });
     it('Should be able to group multiple nested groups', () => {
-      const callDone = (group) => {
+      const callDone = (group: Group) => {
         assert.deepStrictEqual(group.data, groupedByISA);
       };
       const myGroup = new Group(groupedByISAschema, finished[0], callDone);
-      finished.forEach((item, index) => {
+      finished.forEach((item: object, index: number) => {
         //Skip first index / ISA
         if (index === 0) return;
 

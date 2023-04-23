@@ -1,5 +1,4 @@
-const { Schema } = require('../lib/index.js');
-const assert = require('assert');
+import { Schema } from '../lib/index.js';
 
 const schema = {
   start: 'CLP', // What segment starts the group
@@ -35,11 +34,14 @@ describe('Schema', () => {
       assert.deepStrictEqual(Schema.verifySchema(schema), schema);
     });
     it('Should require a start of the group', () => {
+      // @ts-expect-error - todo refactor test
       assert.throws(() => Schema.verifySchema('garbage', Error));
     });
     it('Should verify all nested groups have a start', () => {
       const testSchema = { ...schema };
+      // @ts-expect-error
       delete testSchema.groups[0].start;
+      // @ts-expect-error - todo refactor test
       assert.throws(() => Schema.verifySchema(testSchema, Error));
     });
   });
