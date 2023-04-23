@@ -1,7 +1,7 @@
-const { X12parser } = require('../lib/index.js');
-const assert = require('assert');
-const { createReadStream } = require('fs');
-const { Readable } = require('stream');
+import { X12parser } from '../lib/index.js';
+import { createReadStream } from 'node:fs';
+// @ts-expect-error
+import { finished } from './testFiles/835/profee-done';
 
 describe('X12parser', () => {
   describe('#constructor()', () => {
@@ -74,11 +74,10 @@ describe('X12parser', () => {
 
   describe('835 File Tests', () => {
     it('Should parse files with CRLF', async () =>
-      new Promise((done) => {
+      new Promise<void>((done) => {
         const myParser = new X12parser();
         const testFile = createReadStream('./test/testFiles/835/profee.edi');
         let counter = 0; // So ugly... This should be done nicer
-        const { finished } = require('./testFiles/835/profee-done');
         testFile.pipe(myParser).on('data', (data) => {
           assert.deepStrictEqual(data, finished[counter]);
           counter++;
@@ -91,13 +90,12 @@ describe('X12parser', () => {
       }));
 
     it('Should parse single line files', () =>
-      new Promise((done) => {
+      new Promise<void>((done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
           './test/testFiles/835/profeeOneLine.edi'
         );
         let counter = 0; // So ugly... This should be done nicer
-        const { finished } = require('./testFiles/835/profee-done');
         testFile.pipe(myParser).on('data', (data) => {
           assert.deepStrictEqual(data, finished[counter]);
           counter++;
@@ -110,14 +108,13 @@ describe('X12parser', () => {
       }));
 
     it('Should parse multiple transactions (ISA) in a single file', async () =>
-      new Promise((done) => {
+      new Promise<void>((done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
           './test/testFiles/835/profeeMultiple.edi'
         );
         let counter = 0; // So ugly... This should be done nicer
         let isaCounter = 0; // So ugly... This should be done nicer
-        const { finished } = require('./testFiles/835/profee-done');
         testFile.pipe(myParser).on('data', (data) => {
           if (!finished[counter]) {
             // Super ugly, but resets counter if undefined since it's same ISA just duplicated in file
@@ -136,13 +133,12 @@ describe('X12parser', () => {
       }));
 
     it('Should parse multiline files without delimiter (LF/CRLF is delimiter)', async () =>
-      new Promise((done) => {
+      new Promise<void>((done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
           './test/testFiles/835/multiLineNotDelimited.edi'
         );
         let counter = 0; // So ugly... This should be done nicer
-        const { finished } = require('./testFiles/835/profee-done');
         testFile.pipe(myParser).on('data', (data) => {
           assert.deepStrictEqual(data, finished[counter]);
           counter++;
@@ -158,13 +154,12 @@ describe('X12parser', () => {
   // Tests added for patches / bug fixes
   describe('Patch tests', () => {
     it('Should parse correctly when segment aligns with chunk size', async () =>
-      new Promise((done) => {
+      new Promise<void>((done) => {
         const myParser = new X12parser();
         const testFile = createReadStream('./test/testFiles/835/profee.edi', {
           highWaterMark: 291,
         });
         let counter = 0; // So ugly... This should be done nicer
-        const { finished } = require('./testFiles/835/profee-done');
 
         testFile.pipe(myParser).on('data', (data) => {
           assert.deepStrictEqual(data, finished[counter]);

@@ -16,11 +16,12 @@ declare class Segment {
   _parsed: any[];
   _name: string;
   /** @type {string[]} */
-  get parsed(): string[];
+  get parsed(): string[][];
   /** @type {string} */
   get name(): string;
   get formatted(): {
     name: string;
+    [key: string]: string;
   };
   /**
    * Processes an element and formats it

@@ -1,5 +1,4 @@
-const Segment = require('../lib/Segment.js');
-const assert = require('assert');
+import Segment from '../lib/Segment.js';
 
 describe('Segment', () => {
   const delimiters = {

@@ -1,10 +1,11 @@
+import type { Transform } from 'stream';
 export = X12grouper;
-declare class X12grouper {
+declare class X12grouper extends Transform {
   /**
    * Creates a new Validator stream
-   * @param {Schema[]} schemas An array of Schemas the grouper can use to dynamically adjust
+   * @param {Schema[] | Schema} schemas An array of Schemas the grouper can use to dynamically adjust
    */
-  constructor(schemas?: Schema[]);
+  constructor(schemas?: Schema[] | Schema);
   _schemas: Schema[];
   _version: string;
   _activeGroup: Group | null;
