@@ -89,7 +89,7 @@ describe('X12parser', () => {
         });
       }));
 
-    it('Should parse single line files', () =>
+    it('Should parse single line files', async () =>
       new Promise<void>((done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
