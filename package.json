@@ -7,13 +7,14 @@
     "lint": "eslint ./lib --max-warnings 0 && prettier --check ./lib ./test --loglevel warn"
   },
   "name": "x12-parser",
-  "version": "1.0.2",
+  "version": "1.1.2",
   "description": "NodeJS X12 parser using streams",
   "main": "lib/index.js",
   "repository": "https://github.com/tastypackets/x12-parser",
   "author": "Ezekiel Keator <20361796+tastypackets@users.noreply.github.com>",
   "license": "MIT",
   "private": false,
+  "files": ["lib"],
   "devDependencies": {
     "@tsconfig/node16": "^1.0.3",
     "@vitest/coverage-c8": "^0.30.1",
