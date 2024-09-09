@@ -8,7 +8,7 @@ export default defineConfig({
     coverage: {
       provider: 'c8',
       all: true,
-      exclude: ['docs', 'test', 'vitest.config.ts'],
+      exclude: ['docs', 'test', 'vitest.config.ts', 'dist'],
       extension: ['.ts'],
       // Apply current coverage levels to prevent drops
       // TODO: So close to 100%

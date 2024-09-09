@@ -1,20 +1,26 @@
 {
   "scripts": {
     "test": "vitest",
+    "build": "rm -rf dist && tsc",
+    "prepublishOnly": "npm run lint && npm run test:coverage && npm run build",
     "test:coverage": "vitest run --coverage ./test",
     "format": "prettier --write ./lib ./test --loglevel warn",
     "lint": "tsc --noEmit && eslint ./lib/* --max-warnings 0 && prettier --check ./lib ./test --loglevel warn"
   },
   "name": "x12-parser",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "NodeJS X12 parser using streams",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "repository": "https://github.com/tastypackets/x12-parser",
   "author": "Ezekiel Keator <20361796+tastypackets@users.noreply.github.com>",
   "license": "MIT",
   "private": false,
+  "files": ["dist", "README.md", "LICENSE"],
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
-    "@tsconfig/node16": "^1.0.3",
+    "@tsconfig/node18": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "@vitest/coverage-c8": "^0.30.1",
@@ -54,6 +60,6 @@
     "root": true
   },
   "volta": {
-    "node": "18.16.0"
+    "node": "20.17.0"
   }
 }
