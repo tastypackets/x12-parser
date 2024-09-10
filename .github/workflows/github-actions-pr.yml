@@ -12,6 +12,7 @@ on:
 
 jobs:
   lint:
+    runs-on: ubuntu-latest
     concurrency:
       group: ci-${{ github.head_ref || github.run_id }}
       cancel-in-progress: true
@@ -26,6 +27,7 @@ jobs:
       - run: npm run check:spelling
       - run: npm run check:formatting
   build:
+    runs-on: ubuntu-latest
     concurrency:
       group: ci-${{ github.head_ref || github.run_id }}
       cancel-in-progress: true
