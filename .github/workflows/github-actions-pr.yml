@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 'lts/*'
       - run: npm ci
-      - run: npm lint
+      - run: npm run lint
       - run: npm run check:types
       - run: npm run check:spelling
       - run: npm run check:formatting
