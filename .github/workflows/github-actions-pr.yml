@@ -2,9 +2,13 @@ name: PR CI
 
 on:
   push:
-    branches: [main, v2]
+    branches:
+      - 'main'
+      - 'v2'
   pull_request:
-    branches: [main, v2]
+    branches:
+      - 'main'
+      - 'v2'
 
 jobs:
   lint:
@@ -13,8 +17,9 @@ jobs:
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
-      - name: Static Analysis
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts'
       - run: npm ci
       - run: npm lint
       - run: npm run check:types
