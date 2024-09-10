@@ -2,28 +2,33 @@ name: PR CI
 
 on:
   push:
-    branches: [main, v2]
+    branches:
+      - 'main'
+      - 'v2'
   pull_request:
-    branches: [main, v2]
+    branches:
+      - 'main'
+      - 'v2'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   lint:
-    concurrency:
-      group: ci-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Static Analysis
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
       - run: npm ci
-      - run: npm lint
+      - run: npm run lint
       - run: npm run check:types
       - run: npm run check:spelling
       - run: npm run check:formatting
   build:
-    concurrency:
-      group: ci-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         # Target currently supported LTS branches
