@@ -1,6 +1,9 @@
+import { describe, it } from 'vitest';
+import assert from 'node:assert';
+
 import { X12parser } from '@/index';
 import { createReadStream } from 'node:fs';
-import { finished } from './testFiles/835/profee-done';
+import { finished } from './test-files/835/profee-done';
 
 describe('X12parser', () => {
   describe('#constructor()', () => {
@@ -74,7 +77,7 @@ describe('X12parser', () => {
     it('Should parse files with CRLF', async () =>
       new Promise<void>((done) => {
         const myParser = new X12parser();
-        const testFile = createReadStream('./test/testFiles/835/profee.edi');
+        const testFile = createReadStream('./test/test-files/835/profee.edi');
         let counter = 0; // So ugly... This should be done nicer
         testFile.pipe(myParser).on('data', (data) => {
           assert.deepStrictEqual(data, finished[counter]);
@@ -91,7 +94,7 @@ describe('X12parser', () => {
       new Promise<void>((done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
-          './test/testFiles/835/profeeOneLine.edi'
+          './test/test-files/835/profee-one-line.edi'
         );
         let counter = 0; // So ugly... This should be done nicer
         testFile.pipe(myParser).on('data', (data) => {
@@ -109,7 +112,7 @@ describe('X12parser', () => {
       new Promise<void>((done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
-          './test/testFiles/835/profeeMultiple.edi'
+          './test/test-files/835/profee-multiple.edi'
         );
         let counter = 0; // So ugly... This should be done nicer
         let isaCounter = 0; // So ugly... This should be done nicer
@@ -134,7 +137,7 @@ describe('X12parser', () => {
       new Promise<void>((done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
-          './test/testFiles/835/multiLineNotDelimited.edi'
+          './test/test-files/835/multi-line-not-delimited.edi'
         );
         let counter = 0; // So ugly... This should be done nicer
         testFile.pipe(myParser).on('data', (data) => {
@@ -154,7 +157,7 @@ describe('X12parser', () => {
     it('Should parse correctly when segment aligns with chunk size', async () =>
       new Promise<void>((done) => {
         const myParser = new X12parser();
-        const testFile = createReadStream('./test/testFiles/835/profee.edi', {
+        const testFile = createReadStream('./test/test-files/835/profee.edi', {
           highWaterMark: 291,
         });
         let counter = 0; // So ugly... This should be done nicer

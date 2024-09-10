@@ -44,7 +44,7 @@ export class Segment {
   }
 
   /**
-   * Removes uneeded chars from a string
+   * Removes unneeded chars from a string
    */
   static cleanString(string: string): string {
     return string
@@ -55,7 +55,7 @@ export class Segment {
   /**
    * Processes an element and formats it
    * @param element The string inside the element
-   * @returns A nested array of segments & componenets
+   * @returns A nested array of segments & components
    */
   processElement(element: string): string[] {
     // If this is ISA we don't want to split on component

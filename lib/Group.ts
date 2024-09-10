@@ -12,7 +12,7 @@ export class Group {
   #groups: GroupShape[];
   #terminators: string[];
   #groupHolds: Group[];
-  // TODO: Possibly rename, this holds groups and segemetns and name is confusing
+  // TODO: Possibly rename, this holds groups and segments and name is confusing
   #segmentsHolds: GroupOrSegment[];
   #terminateCB: (group: Group) => void;
 
@@ -80,8 +80,8 @@ export class Group {
       return false;
     }
 
-    const grouopSize = this.#groupHolds.length;
-    for (let i = 0; i < grouopSize; i++) {
+    const groupSize = this.#groupHolds.length;
+    for (let i = 0; i < groupSize; i++) {
       // If handled do not check with any more groups
       if (this.#groupHolds[i].add(segment)) {
         return true;
@@ -105,10 +105,10 @@ export class Group {
    */
   #appendData(segment: GroupOrSegment) {
     if (typeof segment !== 'object')
-      throw new TypeError('Appened data must be an object');
+      throw new TypeError('Append data must be an object');
 
     if (!segment.name)
-      throw new Error('Appened data must have a valid segment name');
+      throw new Error('Append data must have a valid segment name');
 
     this.#segmentsHolds.push(segment);
   }
@@ -135,7 +135,7 @@ export class Group {
   }
 
   /**
-   * Tells the group and all subgroups to immediatly terminate
+   * Tells the group and all subgroups to immediately terminate
    */
   terminate(): void {
     // Terminate any nested groups
@@ -153,7 +153,7 @@ export class Group {
    * @returns Indicates if group accepted the segment or not
    */
   add(segment: FormattedSegment): boolean {
-    // If this termantes the group exit
+    // If this terminates the group exit
     if (this.#isTerminator(segment.name)) {
       // If this was end we want to append data first (bounded loops)
       if (segment.name === this.#end) {
@@ -186,4 +186,4 @@ export class Group {
 }
 
 // Flow:
-// Termiantes this group? -> Belongs to subgroup? -> Should be new sub group? -> Save to this group
+// Terminates this group? -> Belongs to subgroup? -> Should be new sub group? -> Save to this group

@@ -1,10 +1,13 @@
+import { describe, it } from 'vitest';
+import assert from 'node:assert';
+
 import { Group } from '@/Group';
 import type { FormattedSegment, GroupData, GroupShape } from '@/types';
 import {
   groupedByISAschema,
   finished,
   groupedByISA,
-} from './testFiles/835/profee-done';
+} from './test-files/835/profee-done';
 
 describe('Group', () => {
   const clp: FormattedSegment = {

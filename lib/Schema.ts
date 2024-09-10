@@ -8,16 +8,13 @@ export class Schema {
    * Creates a new segment object
    * @constructor
    * @param version What transaction version this applies to
-   * @param groups JSON schema of groupings
+   * @param groups Schema of groupings
    * @param defaultSchema Indicates if this will be used if no schemas match transaction version
    */
   constructor(version: string, groups: GroupShape, defaultSchema?: boolean) {
-    if (typeof version !== 'string')
-      throw new TypeError('File version must be a string');
-
     this.#version = version;
     this.#default = Boolean(defaultSchema);
-    this.#schema = Schema.verifySchema(groups); //TODO: Recrusive objs ?
+    this.#schema = Schema.verifySchema(groups);
   }
 
   get version() {
