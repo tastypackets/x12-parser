@@ -10,12 +10,13 @@ on:
       - 'main'
       - 'v2'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
-    concurrency:
-      group: ci-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -28,9 +29,6 @@ jobs:
       - run: npm run check:formatting
   build:
     runs-on: ubuntu-latest
-    concurrency:
-      group: ci-${{ github.head_ref || github.run_id }}
-      cancel-in-progress: true
     strategy:
       matrix:
         # Target currently supported LTS branches
