@@ -13,7 +13,7 @@ export class X12parser extends Transform {
   /**
    * Creates a new X12parser stream
    * @constructor
-   * @param defaultEncoding The encoding of the file, defualts to ascii
+   * @param defaultEncoding The encoding of the file, defaults to ascii
    */
   constructor(defaultEncoding: BufferEncoding = 'ascii') {
     super({ objectMode: true, defaultEncoding });

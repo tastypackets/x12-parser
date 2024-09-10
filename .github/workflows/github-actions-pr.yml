@@ -7,20 +7,34 @@ on:
     branches: [main, v2]
 
 jobs:
+  lint:
+    concurrency:
+      group: ci-${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static Analysis
+        uses: actions/setup-node@v4
+      - run: npm ci
+      - run: npm lint
+      - run: npm run check:types
+      - run: npm run check:spelling
+      - run: npm run check:formatting
   build:
-    runs-on: ubuntu-latest
+    concurrency:
+      group: ci-${{ github.head_ref || github.run_id }}
+      cancel-in-progress: true
     strategy:
       matrix:
         # Target currently supported LTS branches
         node-version: [18.x, 20.x, 22.x]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run build --if-present
-      - run: npm run lint
       - run: npm run test:coverage

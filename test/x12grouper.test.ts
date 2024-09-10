@@ -1,5 +1,8 @@
+import { describe, it } from 'vitest';
+import assert from 'node:assert';
+
 import { X12grouper, Schema } from '@/index';
-import { finished } from './testFiles/835/profee-done';
+import { finished } from './test-files/835/profee-done';
 
 const schema = {
   start: 'CLP', // What segment starts the group

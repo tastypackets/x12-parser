@@ -1,3 +1,6 @@
+import { describe, it } from 'vitest';
+import assert from 'node:assert';
+
 import { Schema } from '@/index';
 
 const schema = {

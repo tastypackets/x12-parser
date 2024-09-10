@@ -2,7 +2,6 @@
   "compilerOptions": {
     "outDir": "dist",
     "baseUrl": "lib",
-    "types": ["vitest/globals"],
     "allowJs": false,
     "strict": true,
     "declaration": true,
@@ -11,5 +10,5 @@
     }
   },
   "extends": "@tsconfig/node18/tsconfig.json",
-  "include": ["lib"],
+  "exclude": ["node_modules"]
 }
