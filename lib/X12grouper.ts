@@ -82,7 +82,7 @@ export class X12grouper extends Transform {
       this.#schemas.find((item) => item.version === this.#version) ||
       this.#defaultSchema;
 
-    // If there is no active groups and it does not match the segmane name used to start the group emit this segment without grouping
+    // If there is no active groups and it does not match the segment name used to start the group emit this segment without grouping
     if (segment.name !== match.schema.start && !this.#activeGroup) {
       this.push(segment);
     } else {
