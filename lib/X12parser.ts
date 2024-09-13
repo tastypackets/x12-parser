@@ -58,7 +58,7 @@ export class X12parser extends Transform {
    */
   generateSegments(segments: string[]): void {
     segments.forEach((item) => {
-      const segment = new Segment(item, { ...this.#delimiters });
+      const segment = new Segment(item, this.#delimiters);
       this.push(segment.formatted);
     });
   }
@@ -80,13 +80,16 @@ export class X12parser extends Transform {
   /**
    * Checks if there are any delimiters at the start or end of a string
    * @param chunk The raw string for from read stream
-   * @returns String with delimiters removed
    */
   removeDelimiters(chunk: string): string {
     let data = chunk;
+
+    // Clean up starting delimiter, e.g. ~1*2~ becomes 1*2~
     if (data[0] === this.#delimiters.segment) {
       data = data.substring(1);
     }
+
+    // Clean up terminating delimiter, e.g. 1*2~ becomes 1*2
     if (data[data.length - 1] === this.#delimiters.segment) {
       data = data.substring(0, data.length - 1);
     }
@@ -97,10 +100,8 @@ export class X12parser extends Transform {
   /**
    * Splits up a string into an array of segments
    * @param rawString Full segment string from EDI file
-   * @returns An array of segments
    */
   splitSegments(rawString: string): string[] {
-    // Make sure there are not delimiters at start or end of the string
     const cleanedString = this.removeDelimiters(rawString);
     return cleanedString.split(this.#delimiters.segment);
   }
@@ -122,11 +123,11 @@ export class X12parser extends Transform {
       this.#firstLine = false;
     }
 
-    // Get array segments
+    // Get array of segments
     const segments = this.splitSegments(data);
 
     // Store last segment, it may not be a full segment and should be processed w/ next chunk
-    this.#leftOver = segments.splice(-1, 1)[0];
+    this.#leftOver = segments.pop() ?? '';
 
     // Add delimiter back if chunk ended with a delimiter
     if (data[data.length - 1] === this.#delimiters.segment) {

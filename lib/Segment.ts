@@ -31,8 +31,8 @@ export class Segment {
     const formatted: FormattedSegment = { name: this.#name };
 
     this.#parsed.forEach((element, elementIndex) => {
-      // First value is the initial value
-      formatted[`${elementIndex + 1}`] = element.splice(0, 1)[0];
+      // First item in parsed string is the segment value, everything else is components
+      formatted[`${elementIndex + 1}`] = element.shift() ?? '';
 
       // Add components
       element.forEach((component, componentIndex) => {
@@ -73,11 +73,19 @@ export class Segment {
    * @param rawData The segment string
    */
   parseSegment(rawData: string) {
-    // Separate elements
     const elements = rawData.split(this.#delimiters.element);
 
+    const rawName = elements.shift();
+    if (!rawName) {
+      throw new Error(
+        `No strings found in element using deliminator ${
+          this.#delimiters.element
+        }, is the correct deliminator passed? Element data: ${rawData}`
+      );
+    }
+
     // Extract name
-    this.#name = Segment.cleanString(elements.splice(0, 1)[0]);
+    this.#name = Segment.cleanString(rawName);
 
     // Get formatted element w/ components
     this.#parsed = elements.map((element) => this.processElement(element));
