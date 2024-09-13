@@ -5,6 +5,7 @@ export interface Delimiters {
   repetition: string;
 }
 
+/** Segment from X12Parser */
 export interface FormattedSegment {
   /** Name of the segment, e.g. 'ISA' */
   name: string;
@@ -24,12 +25,12 @@ export interface GroupShape {
    */
   end?: string;
   /**
-   * An array if segment names that indicate the end of a group
+   * An array of segment names that indicate the end of a group
    * @example ['N1', 'LX']
    */
   terminators?: string[];
   /**
-   * Friendly name to return for a segment, useful for naming loops in X12 specs
+   * Descriptive name to return for a segment, useful for naming loops in X12 specs
    * @example 'Transaction'
    */
   name: string;

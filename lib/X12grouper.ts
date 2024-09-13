@@ -32,7 +32,6 @@ export class X12grouper extends Transform {
     });
   }
 
-  // Exported for debugging and testing
   get schemas() {
     return this.#schemas;
   }
@@ -51,7 +50,7 @@ export class X12grouper extends Transform {
 
   /**
    * Do not directly use, this is called by readable stream methods when stream has finished
-   * @param {function} cb Execute cb when done flushing
+   * @param cb Execute cb when done flushing
    */
   _flush(cb: () => void): void {
     if (this.#activeGroup) {
@@ -78,16 +77,12 @@ export class X12grouper extends Transform {
     this.#initialHold = [];
   }
 
-  /**
-   * Creates a new group
-   * @param segment Segment from X12parser
-   */
   newGroup(segment: FormattedSegment): void {
     const match =
       this.#schemas.find((item) => item.version === this.#version) ||
       this.#defaultSchema;
 
-    // If there is no active groups and schema start doesn't match send this along as-is wo/ grouping
+    // If there is no active groups and it does not match the segmane name used to start the group emit this segment without grouping
     if (segment.name !== match.schema.start && !this.#activeGroup) {
       this.push(segment);
     } else {
@@ -100,8 +95,7 @@ export class X12grouper extends Transform {
   }
 
   /**
-   * Sends the grouped data down the stream
-   * @param group Group to send
+   * Sends the grouped data down the stream and resets active group
    */
   groupDone(group: Group): void {
     this.push(group.data);
@@ -109,8 +103,7 @@ export class X12grouper extends Transform {
   }
 
   /**
-   * Adds data to the active group
-   * @param segment Segment from the X12parser
+   * Adds data to the active group or starts a new group
    */
   appendToGroup(segment: FormattedSegment): void {
     if (!this.#activeGroup) {
@@ -120,10 +113,6 @@ export class X12grouper extends Transform {
     }
   }
 
-  /**
-   * Process a segment
-   * @param {string} segment The segment from X12parser stream
-   */
   processSegment(segment: FormattedSegment): undefined {
     // Since we select version from GS we need to hold ISA in case it's part of schema
     if (segment.name === 'ISA') {

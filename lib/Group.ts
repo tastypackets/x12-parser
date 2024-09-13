@@ -71,9 +71,8 @@ export class Group {
   }
 
   /**
-   * Checks with all subgroups in order if this belong to them
+   * Checks with all subgroups in order if this belongs to them
    * @param segment Segment from X12parser stream
-   * @returns Indicates if any subgroups handled this
    */
   #checkSubGroups(segment: FormattedSegment): boolean {
     if (!this.hasGroups) {
@@ -150,7 +149,7 @@ export class Group {
   /**
    * Takes a segment and adds it to the proper part of a group if it belongs
    * @param segment Segment from X12parser stream
-   * @returns Indicates if group accepted the segment or not
+   * @return Indicates if group accepted the segment or not
    */
   add(segment: FormattedSegment): boolean {
     // If this terminates the group exit
