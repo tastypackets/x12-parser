@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 import { X12parser } from '@/index';
 import { createReadStream } from 'node:fs';
@@ -67,6 +67,15 @@ describe('X12parser', () => {
 
     it('Should remove delimiter from start and end of string', () => {
       expect(myParser.removeDelimiters(isa3)).toBe(delimitersRemoved);
+    });
+  });
+
+  describe('processChunk()', () => {
+    it('Should not error if no items remain in segment array', () => {
+      const myParser = new X12parser();
+      vi.spyOn(myParser, 'splitSegments').mockImplementationOnce(() => []);
+
+      expect(() => myParser.processChunk('')).not.toThrow();
     });
   });
 
