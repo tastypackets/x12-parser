@@ -1,24 +1,20 @@
-import { describe, it } from 'vitest';
-import assert from 'node:assert';
+import { describe, it, expect } from 'vitest';
 
 import { X12parser } from '@/index';
 import { createReadStream } from 'node:fs';
+import { EventEmitter } from 'node:events';
 import { finished } from './test-files/835/profee-done';
 
 describe('X12parser', () => {
   describe('#constructor()', () => {
     const myParser = new X12parser();
 
-    it('Should return an X12parser', () => {
-      assert(myParser instanceof X12parser);
-    });
-
     it('Should have a pipe function', () => {
-      assert.strictEqual(typeof myParser.pipe, 'function');
+      expect(myParser.pipe).toBeTypeOf('function');
     });
 
     it('Should return an event emitter', () => {
-      assert(myParser instanceof require('events').EventEmitter);
+      expect(myParser).toBeInstanceOf(EventEmitter);
     });
   });
 
@@ -27,14 +23,15 @@ describe('X12parser', () => {
       'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:~';
     const isa2 =
       'ISA&00&          &00&          &ZZ&EMEDNYBAT      &ZZ&ETIN           &100101&1000&#&00501&006000600&0&T&@$';
-    it('Should be abl to auto detect delimiters from ISA', () => {
-      assert.deepEqual(X12parser.detectDelimiters(isa1), {
+    it('Should be able to auto detect delimiters from ISA', () => {
+      expect(X12parser.detectDelimiters(isa1)).toStrictEqual({
         segment: '~',
         component: ':',
         element: '*',
         repetition: '^',
       });
-      assert.deepEqual(X12parser.detectDelimiters(isa2), {
+
+      expect(X12parser.detectDelimiters(isa2)).toStrictEqual({
         segment: '$',
         component: '@',
         element: '&',
@@ -61,15 +58,15 @@ describe('X12parser', () => {
       'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:';
 
     it('Should remove delimiter from start of string', () => {
-      assert.deepEqual(myParser.removeDelimiters(isa1), delimitersRemoved);
+      expect(myParser.removeDelimiters(isa1)).toEqual(delimitersRemoved);
     });
 
     it('Should remove delimiter from end of string', () => {
-      assert.deepEqual(myParser.removeDelimiters(isa2), delimitersRemoved);
+      expect(myParser.removeDelimiters(isa2)).toBe(delimitersRemoved);
     });
 
     it('Should remove delimiter from start and end of string', () => {
-      assert.deepEqual(myParser.removeDelimiters(isa3), delimitersRemoved);
+      expect(myParser.removeDelimiters(isa3)).toBe(delimitersRemoved);
     });
   });
 
@@ -80,7 +77,7 @@ describe('X12parser', () => {
         const testFile = createReadStream('./test/test-files/835/profee.edi');
         let counter = 0; // So ugly... This should be done nicer
         testFile.pipe(myParser).on('data', (data) => {
-          assert.deepStrictEqual(data, finished[counter]);
+          expect(data).toStrictEqual(finished[counter]);
           counter++;
 
           // Just hacking this on until full test file refactor
@@ -98,7 +95,7 @@ describe('X12parser', () => {
         );
         let counter = 0; // So ugly... This should be done nicer
         testFile.pipe(myParser).on('data', (data) => {
-          assert.deepStrictEqual(data, finished[counter]);
+          expect(data).toStrictEqual(finished[counter]);
           counter++;
 
           // Just hacking this on until full test file refactor
@@ -123,7 +120,7 @@ describe('X12parser', () => {
             isaCounter++;
           }
 
-          assert.deepStrictEqual(data, finished[counter]);
+          expect(data).toStrictEqual(finished[counter]);
           counter++;
 
           // Just hacking this on until full test file refactor
@@ -141,7 +138,7 @@ describe('X12parser', () => {
         );
         let counter = 0; // So ugly... This should be done nicer
         testFile.pipe(myParser).on('data', (data) => {
-          assert.deepStrictEqual(data, finished[counter]);
+          expect(data).toStrictEqual(finished[counter]);
           counter++;
 
           // Just hacking this on until full test file refactor
@@ -163,7 +160,7 @@ describe('X12parser', () => {
         let counter = 0; // So ugly... This should be done nicer
 
         testFile.pipe(myParser).on('data', (data) => {
-          assert.deepStrictEqual(data, finished[counter]);
+          expect(data).toStrictEqual(finished[counter]);
           counter++;
 
           // Just hacking this on until full test file refactor

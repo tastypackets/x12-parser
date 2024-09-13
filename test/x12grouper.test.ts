@@ -1,5 +1,5 @@
-import { describe, it } from 'vitest';
-import assert from 'node:assert';
+import { describe, it, expect } from 'vitest';
+import { EventEmitter } from 'node:events';
 
 import { X12grouper, Schema } from '@/index';
 import { finished } from './test-files/835/profee-done';
@@ -24,30 +24,33 @@ const testSchema2 = new Schema('005010X221', schema, false);
 describe('X12grouper', () => {
   describe('#constructor()', () => {
     const myGrouper = new X12grouper(testSchema);
-    it('Should return an X12grouper', () => {
-      assert(myGrouper instanceof X12grouper);
-    });
+
     it('Should have a pipe function', () => {
-      assert.strictEqual(typeof myGrouper.pipe, 'function');
+      expect(myGrouper.pipe).toBeTypeOf('function');
     });
+
     it('Should return an event emitter', () => {
-      assert(myGrouper instanceof require('events').EventEmitter);
+      expect(myGrouper).toBeInstanceOf(EventEmitter);
     });
+
     it('Should accept a single schema object', () => {
       const tmpGrouper = new X12grouper(testSchema);
-      assert.deepStrictEqual(tmpGrouper.schemas, [testSchema]);
+      expect(tmpGrouper.schemas).toStrictEqual([testSchema]);
     });
+
     it('Should accept an array of schemas', () => {
       const tmpGrouper = new X12grouper([testSchema, testSchema2]);
-      assert.deepStrictEqual(tmpGrouper.schemas, [testSchema, testSchema2]);
+      expect(tmpGrouper.schemas).toStrictEqual([testSchema, testSchema2]);
     });
   });
+
   describe('#processSegment()', () => {
     it('ISA should go into an intial hold', () => {
       const tmpGrouper = new X12grouper(testSchema);
       tmpGrouper.write(finished[0]); // ISA
-      assert.deepStrictEqual(tmpGrouper.initialHold[0], finished[0]);
+      expect(tmpGrouper.initialHold[0]).toBe(finished[0]);
     });
+
     it('Items in initial hold should come down pipe before new segment', async () =>
       new Promise<void>((done) => {
         // ISA -> Hold
@@ -55,7 +58,7 @@ describe('X12grouper', () => {
         const tmpGrouper = new X12grouper(testSchema);
         let counter = 0;
         tmpGrouper.on('data', (data: (typeof finished)[number]) => {
-          assert.deepStrictEqual(finished[counter], data);
+          expect(finished[counter]).toStrictEqual(data);
           counter++;
 
           // Just hacking this on until full test file refactor
@@ -67,50 +70,56 @@ describe('X12grouper', () => {
         tmpGrouper.write(finished[1]); // GS
       }));
   });
+
   describe('Schema detection', () => {
     it('Should set the version to GS08', () => {
       const tmpGrouper = new X12grouper([testSchema, testSchema2]);
       tmpGrouper.write(finished[1]);
-      assert.strictEqual(tmpGrouper.activeVersion, '005010X221A1');
+      expect(tmpGrouper.activeVersion).toBe('005010X221A1');
       tmpGrouper.write({ ...finished[1], 8: '005010X221' });
-      assert.strictEqual(tmpGrouper.activeVersion, '005010X221');
+      expect(tmpGrouper.activeVersion).toBe('005010X221');
     });
+
     it('The first schema marked as default will be the default schema', () => {
       const tmpGrouper = new X12grouper([testSchema2, testSchema]);
-      assert.deepStrictEqual(tmpGrouper.defaultSchema, testSchema);
+      expect(tmpGrouper.defaultSchema).toStrictEqual(testSchema);
     });
+
     it('If no schemas are marked as the default the first schema will be used as default', () => {
       const tmpGrouper = new X12grouper([
         testSchema2,
         new Schema('005010X221A1', schema),
       ]);
-      assert.deepStrictEqual(tmpGrouper.defaultSchema, testSchema2);
+      expect(tmpGrouper.defaultSchema).toStrictEqual(testSchema2);
     });
+
     it('If there is a schema version that matches GS08 it will be used', () => {
       const tmpSchema = new Schema('005010X221A1', { ...schema, name: 'test' });
       const tmpGrouper = new X12grouper([testSchema2, tmpSchema]);
       tmpGrouper.write(finished[1]); // GS
       tmpGrouper.write(finished[14]); // CLP
-      assert.strictEqual(tmpGrouper.activeGroup!.schema.name, 'test');
+      expect(tmpGrouper.activeGroup!.schema.name).toBe('test');
     });
+
     it('If there is no schema version that matches GS08 the default will be used', () => {
       const tmpSchema = new Schema('random', { ...schema, name: 'test' });
       const tmpGrouper = new X12grouper([testSchema2, tmpSchema]);
       tmpGrouper.write(finished[1]); // GS
       tmpGrouper.write(finished[14]); // CLP
-      assert.strictEqual(tmpGrouper.activeGroup!.schema.name, '2100');
+      expect(tmpGrouper.activeGroup!.schema.name).toBe('2100');
     });
+
     it('If segment is GS it will update the version and use new schema', () => {
       const tmpSchema = new Schema('005010X221A1', { ...schema, name: 'test' });
       const tmpGrouper = new X12grouper([testSchema2, tmpSchema]);
       tmpGrouper.write(finished[1]); // GS - 005010X221A1
       tmpGrouper.write(finished[14]); // CLP
-      assert.strictEqual(tmpGrouper.activeVersion, '005010X221A1');
-      assert.strictEqual(tmpGrouper.activeGroup!.schema.name, 'test');
+      expect(tmpGrouper.activeVersion).toBe('005010X221A1');
+      expect(tmpGrouper.activeGroup!.schema.name).toBe('test');
       tmpGrouper.write({ ...finished[1], 8: '005010X221' }); // GS
       tmpGrouper.write(finished[14]); // CLP
-      assert.strictEqual(tmpGrouper.activeVersion, '005010X221');
-      assert.strictEqual(tmpGrouper.activeGroup!.schema.name, '2100');
+      expect(tmpGrouper.activeVersion).toBe('005010X221');
+      expect(tmpGrouper.activeGroup!.schema.name).toBe('2100');
     });
   });
 });
