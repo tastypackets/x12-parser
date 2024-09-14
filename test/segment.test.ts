@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 import { Segment } from '@/Segment';
 
@@ -8,7 +8,7 @@ describe('Segment', () => {
     element: '*',
     component: ':',
     repetition: '^',
-  };
+  } as const;
 
   describe('#cleanString()', () => {
     it('Should remove white space & remove new lines', () => {
@@ -31,6 +31,20 @@ describe('Segment', () => {
       expect(mySegment.processElement(':')).toStrictEqual([':']);
     });
   });
+
+  describe('get formatted()', () => {
+    it('Should still return a string if segment is an empty array', () => {
+      const mySegment = new Segment('', delimiters);
+      vi.spyOn(mySegment, 'processElement').mockImplementation(() => []);
+      mySegment.parseSegment('*');
+
+      expect(mySegment.formatted).toStrictEqual({
+        1: '',
+        name: '',
+      });
+    });
+  });
+
   // Class immediatly calls parse, so constructor test was moved below the other method tests
   // To be changed in future update when type testing is added to segment class
   describe('#constructor()', () => {
