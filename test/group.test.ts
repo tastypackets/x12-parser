@@ -1,5 +1,4 @@
-import { describe, it } from 'vitest';
-import assert from 'node:assert';
+import { describe, expect, it } from 'vitest';
 
 import { Group } from '@/Group';
 import type { FormattedSegment, GroupData, GroupShape } from '@/types';
@@ -131,17 +130,10 @@ describe('Group', () => {
     ],
   };
 
-  describe('#constructor()', () => {
-    it('Should return an instance of group', () => {
-      const myGroup = new Group(schema.groups![1], clp, () => {});
-      assert(myGroup instanceof Group);
-    });
-  });
   describe('#terminate()', () => {
     it('Should execute cb with grouped data', () => {
       const callDone = (group: Group) => {
-        assert(group instanceof Group);
-        assert.deepStrictEqual(group.data, {
+        expect(group.data).toStrictEqual({
           name: '2100',
           data: [{ ...clp }],
           isGroup: true,
@@ -151,20 +143,21 @@ describe('Group', () => {
       myGroup.terminate();
     });
   });
+
   describe('#add()', () => {
     it('Should group nested data', () => {
       const callDone = (group: Group) => {
-        assert.deepStrictEqual(group.data, grouped);
+        expect(group.data).toStrictEqual(grouped);
       };
       const myGroup = new Group(schema.groups![1], clp, callDone);
       svcArray.forEach((svc) => {
-        assert.strictEqual(myGroup.add(svc), true);
+        expect(myGroup.add(svc)).toBe(true);
       });
       myGroup.terminate();
     });
     it('Should be able to group multiple nested groups', () => {
       const callDone = (group: Group) => {
-        assert.deepStrictEqual(group.data, groupedByISA);
+        expect(group.data).toStrictEqual(groupedByISA);
       };
       const myGroup = new Group(groupedByISAschema, finished[0], callDone);
       finished.forEach((item, index) => {

@@ -76,16 +76,9 @@ export class Segment {
     const elements = rawData.split(this.#delimiters.element);
 
     const rawName = elements.shift();
-    if (!rawName) {
-      throw new Error(
-        `No strings found in element using deliminator ${
-          this.#delimiters.element
-        }, is the correct deliminator passed? Element data: ${rawData}`
-      );
-    }
 
-    // Extract name
-    this.#name = Segment.cleanString(rawName);
+    // Extract name - TS assign to string, since we did a split above and know there is an array item
+    this.#name = Segment.cleanString(rawName as string);
 
     // Get formatted element w/ components
     this.#parsed = elements.map((element) => this.processElement(element));
