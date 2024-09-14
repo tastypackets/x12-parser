@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { EventEmitter } from 'node:events';
 
 import { X12grouper, Schema } from '@/index';
 import { finished } from './test-files/835/profee-done';
+import { Group } from '@/Group';
 
 const schema = {
   start: 'CLP', // What segment starts the group
@@ -23,16 +24,6 @@ const testSchema2 = new Schema('005010X221', schema, false);
 //TODO: Still need to add unit tests for some specific methods
 describe('X12grouper', () => {
   describe('#constructor()', () => {
-    const myGrouper = new X12grouper(testSchema);
-
-    it('Should have a pipe function', () => {
-      expect(myGrouper.pipe).toBeTypeOf('function');
-    });
-
-    it('Should return an event emitter', () => {
-      expect(myGrouper).toBeInstanceOf(EventEmitter);
-    });
-
     it('Should accept a single schema object', () => {
       const tmpGrouper = new X12grouper(testSchema);
       expect(tmpGrouper.schemas).toStrictEqual([testSchema]);
@@ -41,6 +32,35 @@ describe('X12grouper', () => {
     it('Should accept an array of schemas', () => {
       const tmpGrouper = new X12grouper([testSchema, testSchema2]);
       expect(tmpGrouper.schemas).toStrictEqual([testSchema, testSchema2]);
+    });
+
+    it('Should throw an error if schema is not a Schema object', () => {
+      expect(
+        () =>
+          new X12grouper({
+            // @ts-expect-error -- Testing invalid data input
+            test: 'not an instance of schema object',
+          })
+      ).toThrow();
+    });
+  });
+
+  describe('Stream API', () => {
+    it('Should return an event emitter', () => {
+      const myGrouper = new X12grouper(testSchema);
+      expect(myGrouper).toBeInstanceOf(EventEmitter);
+    });
+
+    it('Should end any pending groups during flush (stream end)', () => {
+      const myGrouper = new X12grouper(testSchema);
+      myGrouper.write({ name: 'CLP', CLP1: 'some test data' });
+
+      const groupDoneSpy = vi.spyOn(myGrouper, 'groupDone');
+
+      expect(myGrouper.activeGroup).toBeInstanceOf(Group);
+      myGrouper._flush(() => {});
+      expect(myGrouper.activeGroup).not.toBeInstanceOf(Group);
+      expect(groupDoneSpy).toBeCalled();
     });
   });
 
