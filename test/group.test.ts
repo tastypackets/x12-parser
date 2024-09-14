@@ -155,6 +155,7 @@ describe('Group', () => {
       });
       myGroup.terminate();
     });
+
     it('Should be able to group multiple nested groups', () => {
       const callDone = (group: Group) => {
         expect(group.data).toStrictEqual(groupedByISA);
@@ -167,6 +168,21 @@ describe('Group', () => {
         myGroup.add(item);
       });
       myGroup.terminate();
+    });
+
+    it('Should throw an error if invalid segment data is passed', () => {
+      const myGroup = new Group(groupedByISAschema, finished[0], () => {});
+      // @ts-expect-error -- Testing invalid data input handling
+      expect(() => myGroup.add('invalid data')).toThrow();
+      // @ts-expect-error -- Testing invalid data input handling
+      expect(() => myGroup.add({ name: undefined })).toThrow();
+    });
+  });
+
+  describe('constructor', () => {
+    it('Uses defualt name if none is passed', () => {
+      const myGroup = new Group({ start: '', name: '' }, finished[0], () => {});
+      expect(myGroup.data).toMatchObject({ name: 'No Name' });
     });
   });
 });
