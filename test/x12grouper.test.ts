@@ -4,6 +4,7 @@ import { EventEmitter } from 'node:events';
 import { X12grouper, Schema } from '@/index';
 import { finished } from './test-files/835/profee-done';
 import { Group } from '@/Group';
+import { it_cb } from './callback-test';
 
 const schema = {
   start: 'CLP', // What segment starts the group
@@ -71,8 +72,9 @@ describe('X12grouper', () => {
       expect(tmpGrouper.initialHold[0]).toBe(finished[0]);
     });
 
-    it('Items in initial hold should come down pipe before new segment', async () =>
-      new Promise<void>((done) => {
+    it_cb(
+      'Items in initial hold should come down pipe before new segment',
+      (done) => {
         // ISA -> Hold
         // GS -> Process Hold (ISA) -> Process GS
         const tmpGrouper = new X12grouper(testSchema);
@@ -81,14 +83,14 @@ describe('X12grouper', () => {
           expect(finished[counter]).toStrictEqual(data);
           counter++;
 
-          // Just hacking this on until full test file refactor
           if (counter === 2) {
             done();
           }
         });
         tmpGrouper.write(finished[0]); // ISA
         tmpGrouper.write(finished[1]); // GS
-      }));
+      }
+    );
   });
 
   describe('Schema detection', () => {
