@@ -5,7 +5,7 @@ This branch is for active work on V2, it is not ready to be published!
 - [x] Convert all files to TS
 - [x] Add TS build step
 - [x] Add TS linting rules
-- [ ] Refactor and modernize all tests
-- [ ] Push to 100% coverage - around 90% avg in v1
+- [x] Refactor and modernize all tests
+- [x] Push to 100% coverage - around 90% avg in v1
 - [ ] Better docs & replace the jsdoc generator
 - [ ] Add a simple copy past example to get started

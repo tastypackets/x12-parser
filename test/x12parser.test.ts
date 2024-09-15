@@ -4,6 +4,7 @@ import { X12parser } from '@/index';
 import { createReadStream } from 'node:fs';
 import { EventEmitter } from 'node:events';
 import { finished } from './test-files/835/profee-done';
+import { it_cb } from './callback-test';
 
 describe('X12parser', () => {
   describe('#constructor()', () => {
@@ -80,42 +81,41 @@ describe('X12parser', () => {
   });
 
   describe('835 File Tests', () => {
-    it('Should parse files with CRLF', async () =>
-      new Promise<void>((done) => {
-        const myParser = new X12parser();
-        const testFile = createReadStream('./test/test-files/835/profee.edi');
-        let counter = 0; // So ugly... This should be done nicer
-        testFile.pipe(myParser).on('data', (data) => {
-          expect(data).toStrictEqual(finished[counter]);
-          counter++;
+    it_cb('Should parse files with CRLF', (done) => {
+      const myParser = new X12parser();
+      const testFile = createReadStream('./test/test-files/835/profee.edi');
+      let counter = 0; // So ugly... This should be done nicer
+      testFile.pipe(myParser).on('data', (data) => {
+        expect(data).toStrictEqual(finished[counter]);
+        counter++;
 
-          // Just hacking this on until full test file refactor
-          if (counter === finished.length) {
-            done();
-          }
-        });
-      }));
+        // Just hacking this on until full test file refactor
+        if (counter === finished.length) {
+          done();
+        }
+      });
+    });
 
-    it('Should parse single line files', async () =>
-      new Promise<void>((done) => {
-        const myParser = new X12parser();
-        const testFile = createReadStream(
-          './test/test-files/835/profee-one-line.edi'
-        );
-        let counter = 0; // So ugly... This should be done nicer
-        testFile.pipe(myParser).on('data', (data) => {
-          expect(data).toStrictEqual(finished[counter]);
-          counter++;
+    it_cb('Should parse single line files', (done) => {
+      const myParser = new X12parser();
+      const testFile = createReadStream(
+        './test/test-files/835/profee-one-line.edi'
+      );
+      let counter = 0; // So ugly... This should be done nicer
+      testFile.pipe(myParser).on('data', (data) => {
+        expect(data).toStrictEqual(finished[counter]);
+        counter++;
 
-          // Just hacking this on until full test file refactor
-          if (counter === finished.length) {
-            done();
-          }
-        });
-      }));
+        // Just hacking this on until full test file refactor
+        if (counter === finished.length) {
+          done();
+        }
+      });
+    });
 
-    it('Should parse multiple transactions (ISA) in a single file', async () =>
-      new Promise<void>((done) => {
+    it_cb(
+      'Should parse multiple transactions (ISA) in a single file',
+      (done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
           './test/test-files/835/profee-multiple.edi'
@@ -137,10 +137,12 @@ describe('X12parser', () => {
             done();
           }
         });
-      }));
+      }
+    );
 
-    it('Should parse multiline files without delimiter (LF/CRLF is delimiter)', async () =>
-      new Promise<void>((done) => {
+    it_cb(
+      'Should parse multiline files without delimiter (LF/CRLF is delimiter)',
+      (done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
           './test/test-files/835/multi-line-not-delimited.edi'
@@ -155,13 +157,15 @@ describe('X12parser', () => {
             done();
           }
         });
-      }));
+      }
+    );
   });
 
   // Tests added for patches / bug fixes
   describe('Patch tests', () => {
-    it('Should parse correctly when segment aligns with chunk size', async () =>
-      new Promise<void>((done) => {
+    it_cb(
+      'Should parse correctly when segment aligns with chunk size',
+      (done) => {
         const myParser = new X12parser();
         const testFile = createReadStream('./test/test-files/835/profee.edi', {
           highWaterMark: 291,
@@ -177,6 +181,7 @@ describe('X12parser', () => {
             done();
           }
         });
-      }));
+      }
+    );
   });
 });
