@@ -4,7 +4,7 @@
     "build": "rm -rf dist && npm run build:cjs && npm run build:esm",
     "build:cjs": "tsc --project tsconfig.cjs.json",
     "build:esm": "tsc --project tsconfig.esm.json",
-    "prepublishOnly": "npm run lint && npm run test:coverage && npm run build",
+    "prepublishOnly": "npm run check:ci && npm run build",
     "test:coverage": "vitest run --coverage ./test",
     "format": "prettier --write ./lib ./test --loglevel warn",
     "lint": "eslint ./lib/* --max-warnings 0",
