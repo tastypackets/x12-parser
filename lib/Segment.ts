@@ -1,4 +1,4 @@
-import type { Delimiters, FormattedSegment } from '@/types.js';
+import type { Delimiters, FormattedSegment } from './types.js';
 
 export class Segment {
   #delimiters: Delimiters;

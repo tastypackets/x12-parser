@@ -1,16 +1,12 @@
 {
   "compilerOptions": {
-    "baseUrl": "lib",
     "allowJs": false,
     "strict": true,
     "declaration": true,
     "module": "NodeNext",
     "skipLibCheck": true,
     "lib": ["es2023"],
-    "target": "es2022",
-    "paths": {
-      "@/*": ["*"]
-    }
+    "target": "es2022"
   },
   "include": ["lib"]
 }
