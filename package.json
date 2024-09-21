@@ -14,7 +14,7 @@
     "check:spelling": "cspell ."
   },
   "name": "x12-parser",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "NodeJS X12 parser using streams",
   "main": "dist/cjs/index.js",
   "exports": {

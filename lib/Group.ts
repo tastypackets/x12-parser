@@ -3,7 +3,7 @@ import type {
   GroupShape,
   GroupOrSegment,
   GroupData,
-} from '@/types.js';
+} from './types.js';
 
 export class Group {
   #schema: GroupShape;
