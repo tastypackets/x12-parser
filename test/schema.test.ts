@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { GroupShape, Schema } from '@/index';
+import { GroupShape, Schema } from '@/index.js';
 
 const schema = {
   start: 'CLP', // What segment starts the group

@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { Group } from '@/Group';
-import type { FormattedSegment, GroupData, GroupShape } from '@/types';
+import { Group } from '@/Group.js';
+import type { FormattedSegment, GroupData, GroupShape } from '@/types.js';
 import {
   groupedByISAschema,
   finished,
   groupedByISA,
-} from './test-files/835/profee-done';
+} from './test-files/835/profee-done.js';
 
 describe('Group', () => {
   const clp: FormattedSegment = {

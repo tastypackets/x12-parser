@@ -1,8 +1,8 @@
 import { Transform } from 'node:stream';
 
-import { Schema } from '@/Schema';
-import { Group } from '@/Group';
-import type { FormattedSegment } from '@/types';
+import { Schema } from '@/Schema.js';
+import { Group } from '@/Group.js';
+import type { FormattedSegment } from '@/types.js';
 
 export class X12grouper extends Transform {
   #schemas: Schema[];

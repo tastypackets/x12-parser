@@ -1,4 +1,4 @@
-import type { FormattedSegment, GroupOrSegment, GroupShape } from 'types';
+import type { FormattedSegment, GroupOrSegment, GroupShape } from 'types.js';
 
 export const finished: FormattedSegment[] = [
   {

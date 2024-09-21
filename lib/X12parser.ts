@@ -1,8 +1,8 @@
 import { Transform } from 'node:stream';
 import { StringDecoder } from 'node:string_decoder';
 
-import { Segment } from '@/Segment';
-import type { Delimiters } from '@/types';
+import { Segment } from '@/Segment.js';
+import type { Delimiters } from '@/types.js';
 
 export class X12parser extends Transform {
   #decoder: StringDecoder;

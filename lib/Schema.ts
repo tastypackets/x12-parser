@@ -1,4 +1,4 @@
-import type { GroupShape } from '@/types';
+import type { GroupShape } from '@/types.js';
 
 export class Schema {
   #version: string;

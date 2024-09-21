@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { EventEmitter } from 'node:events';
 
-import { X12grouper, Schema } from '@/index';
-import { finished } from './test-files/835/profee-done';
-import { Group } from '@/Group';
-import { it_cb } from './callback-test';
+import { X12grouper, Schema } from '@/index.js';
+import { finished } from './test-files/835/profee-done.js';
+import { Group } from '@/Group.js';
+import { it_cb } from './callback-test.js';
 
 const schema = {
   start: 'CLP', // What segment starts the group

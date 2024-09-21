@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 
-import { Segment } from '@/Segment';
+import { Segment } from '@/Segment.js';
 
 describe('Segment', () => {
   const delimiters = {

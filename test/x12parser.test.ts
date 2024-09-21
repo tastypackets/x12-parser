@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 
-import { X12parser } from '@/index';
+import { X12parser } from '@/index.js';
 import { createReadStream } from 'node:fs';
 import { EventEmitter } from 'node:events';
-import { finished } from './test-files/835/profee-done';
-import { it_cb } from './callback-test';
+import { finished } from './test-files/835/profee-done.js';
+import { it_cb } from './callback-test.js';
 
 describe('X12parser', () => {
   describe('#constructor()', () => {

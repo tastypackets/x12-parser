@@ -3,7 +3,7 @@ import type {
   GroupShape,
   GroupOrSegment,
   GroupData,
-} from '@/types';
+} from '@/types.js';
 
 export class Group {
   #schema: GroupShape;
@@ -183,6 +183,3 @@ export class Group {
     return true;
   }
 }
-
-// Flow:
-// Terminates this group? -> Belongs to subgroup? -> Should be new sub group? -> Save to this group
