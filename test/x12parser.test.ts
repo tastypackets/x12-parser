@@ -1,22 +1,21 @@
-import { X12parser } from '../lib/index.js';
+import { describe, it, expect, vi } from 'vitest';
+
+import { X12parser } from '@/index.js';
 import { createReadStream } from 'node:fs';
-// @ts-expect-error
-import { finished } from './testFiles/835/profee-done';
+import { EventEmitter } from 'node:events';
+import { finished } from './test-files/835/profee-done.js';
+import { it_cb } from './callback-test.js';
 
 describe('X12parser', () => {
   describe('#constructor()', () => {
     const myParser = new X12parser();
 
-    it('Should return an X12parser', () => {
-      assert(myParser instanceof X12parser);
-    });
-
     it('Should have a pipe function', () => {
-      assert.strictEqual(typeof myParser.pipe, 'function');
+      expect(myParser.pipe).toBeTypeOf('function');
     });
 
     it('Should return an event emitter', () => {
-      assert(myParser instanceof require('events').EventEmitter);
+      expect(myParser).toBeInstanceOf(EventEmitter);
     });
   });
 
@@ -25,14 +24,15 @@ describe('X12parser', () => {
       'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:~';
     const isa2 =
       'ISA&00&          &00&          &ZZ&EMEDNYBAT      &ZZ&ETIN           &100101&1000&#&00501&006000600&0&T&@$';
-    it('Should be abl to auto detect delimiters from ISA', () => {
-      assert.deepEqual(X12parser.detectDelimiters(isa1), {
+    it('Should be able to auto detect delimiters from ISA', () => {
+      expect(X12parser.detectDelimiters(isa1)).toStrictEqual({
         segment: '~',
         component: ':',
         element: '*',
         repetition: '^',
       });
-      assert.deepEqual(X12parser.detectDelimiters(isa2), {
+
+      expect(X12parser.detectDelimiters(isa2)).toStrictEqual({
         segment: '$',
         component: '@',
         element: '&',
@@ -43,12 +43,11 @@ describe('X12parser', () => {
 
   describe('removeDelimiters()', () => {
     const myParser = new X12parser();
-    myParser._delimiters = {
-      segment: '~',
-      component: ':',
-      element: '*',
-      repetition: '^',
-    };
+    // Pass an initial data w/ GS to detect delimiters
+    myParser.write(
+      'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:~GS*HP*EMEDNYBAT*ETIN*20100101*1050*6000600*X*005010X221A1~'
+    );
+
     const isa1 =
       '~ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:';
     const isa2 =
@@ -60,58 +59,66 @@ describe('X12parser', () => {
       'ISA*00*          *00*          *ZZ*EMEDNYBAT      *ZZ*ETIN           *100101*1000*^*00501*006000600*0*T*:';
 
     it('Should remove delimiter from start of string', () => {
-      assert.deepEqual(myParser.removeDelimiters(isa1), delimitersRemoved);
+      expect(myParser.removeDelimiters(isa1)).toEqual(delimitersRemoved);
     });
 
     it('Should remove delimiter from end of string', () => {
-      assert.deepEqual(myParser.removeDelimiters(isa2), delimitersRemoved);
+      expect(myParser.removeDelimiters(isa2)).toBe(delimitersRemoved);
     });
 
     it('Should remove delimiter from start and end of string', () => {
-      assert.deepEqual(myParser.removeDelimiters(isa3), delimitersRemoved);
+      expect(myParser.removeDelimiters(isa3)).toBe(delimitersRemoved);
+    });
+  });
+
+  describe('processChunk()', () => {
+    it('Should not error if no items remain in segment array', () => {
+      const myParser = new X12parser();
+      vi.spyOn(myParser, 'splitSegments').mockImplementationOnce(() => []);
+
+      expect(() => myParser.processChunk('')).not.toThrow();
     });
   });
 
   describe('835 File Tests', () => {
-    it('Should parse files with CRLF', async () =>
-      new Promise<void>((done) => {
-        const myParser = new X12parser();
-        const testFile = createReadStream('./test/testFiles/835/profee.edi');
-        let counter = 0; // So ugly... This should be done nicer
-        testFile.pipe(myParser).on('data', (data) => {
-          assert.deepStrictEqual(data, finished[counter]);
-          counter++;
+    it_cb('Should parse files with CRLF', (done) => {
+      const myParser = new X12parser();
+      const testFile = createReadStream('./test/test-files/835/profee.edi');
+      let counter = 0; // So ugly... This should be done nicer
+      testFile.pipe(myParser).on('data', (data) => {
+        expect(data).toStrictEqual(finished[counter]);
+        counter++;
 
-          // Just hacking this on until full test file refactor
-          if (counter === finished.length) {
-            done();
-          }
-        });
-      }));
+        // Just hacking this on until full test file refactor
+        if (counter === finished.length) {
+          done();
+        }
+      });
+    });
 
-    it('Should parse single line files', async () =>
-      new Promise<void>((done) => {
+    it_cb('Should parse single line files', (done) => {
+      const myParser = new X12parser();
+      const testFile = createReadStream(
+        './test/test-files/835/profee-one-line.edi'
+      );
+      let counter = 0; // So ugly... This should be done nicer
+      testFile.pipe(myParser).on('data', (data) => {
+        expect(data).toStrictEqual(finished[counter]);
+        counter++;
+
+        // Just hacking this on until full test file refactor
+        if (counter === finished.length) {
+          done();
+        }
+      });
+    });
+
+    it_cb(
+      'Should parse multiple transactions (ISA) in a single file',
+      (done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
-          './test/testFiles/835/profeeOneLine.edi'
-        );
-        let counter = 0; // So ugly... This should be done nicer
-        testFile.pipe(myParser).on('data', (data) => {
-          assert.deepStrictEqual(data, finished[counter]);
-          counter++;
-
-          // Just hacking this on until full test file refactor
-          if (counter === finished.length) {
-            done();
-          }
-        });
-      }));
-
-    it('Should parse multiple transactions (ISA) in a single file', async () =>
-      new Promise<void>((done) => {
-        const myParser = new X12parser();
-        const testFile = createReadStream(
-          './test/testFiles/835/profeeMultiple.edi'
+          './test/test-files/835/profee-multiple.edi'
         );
         let counter = 0; // So ugly... This should be done nicer
         let isaCounter = 0; // So ugly... This should be done nicer
@@ -122,7 +129,7 @@ describe('X12parser', () => {
             isaCounter++;
           }
 
-          assert.deepStrictEqual(data, finished[counter]);
+          expect(data).toStrictEqual(finished[counter]);
           counter++;
 
           // Just hacking this on until full test file refactor
@@ -130,17 +137,19 @@ describe('X12parser', () => {
             done();
           }
         });
-      }));
+      }
+    );
 
-    it('Should parse multiline files without delimiter (LF/CRLF is delimiter)', async () =>
-      new Promise<void>((done) => {
+    it_cb(
+      'Should parse multiline files without delimiter (LF/CRLF is delimiter)',
+      (done) => {
         const myParser = new X12parser();
         const testFile = createReadStream(
-          './test/testFiles/835/multiLineNotDelimited.edi'
+          './test/test-files/835/multi-line-not-delimited.edi'
         );
         let counter = 0; // So ugly... This should be done nicer
         testFile.pipe(myParser).on('data', (data) => {
-          assert.deepStrictEqual(data, finished[counter]);
+          expect(data).toStrictEqual(finished[counter]);
           counter++;
 
           // Just hacking this on until full test file refactor
@@ -148,21 +157,23 @@ describe('X12parser', () => {
             done();
           }
         });
-      }));
+      }
+    );
   });
 
   // Tests added for patches / bug fixes
   describe('Patch tests', () => {
-    it('Should parse correctly when segment aligns with chunk size', async () =>
-      new Promise<void>((done) => {
+    it_cb(
+      'Should parse correctly when segment aligns with chunk size',
+      (done) => {
         const myParser = new X12parser();
-        const testFile = createReadStream('./test/testFiles/835/profee.edi', {
+        const testFile = createReadStream('./test/test-files/835/profee.edi', {
           highWaterMark: 291,
         });
         let counter = 0; // So ugly... This should be done nicer
 
         testFile.pipe(myParser).on('data', (data) => {
-          assert.deepStrictEqual(data, finished[counter]);
+          expect(data).toStrictEqual(finished[counter]);
           counter++;
 
           // Just hacking this on until full test file refactor
@@ -170,6 +181,7 @@ describe('X12parser', () => {
             done();
           }
         });
-      }));
+      }
+    );
   });
 });

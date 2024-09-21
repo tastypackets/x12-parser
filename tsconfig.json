@@ -1,9 +1,16 @@
 {
   "compilerOptions": {
-    "rootDir": "lib",
     "baseUrl": "lib",
-    "types": ["vitest/globals"]
+    "allowJs": false,
+    "strict": true,
+    "declaration": true,
+    "module": "NodeNext",
+    "skipLibCheck": true,
+    "lib": ["es2023"],
+    "target": "es2022",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
-  "extends": "@tsconfig/node16/tsconfig.json",
-  "exclude": ["coverage", "node_modules", "dist"]
+  "include": ["lib"]
 }

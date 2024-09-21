@@ -1,29 +1,48 @@
 {
   "scripts": {
     "test": "vitest",
+    "build": "rm -rf dist && npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc --project tsconfig.cjs.json",
+    "build:esm": "tsc --project tsconfig.esm.json",
+    "prepublishOnly": "npm run lint && npm run test:coverage && npm run build",
     "test:coverage": "vitest run --coverage ./test",
-    "docs": "jsdoc -c jsdoc.json",
     "format": "prettier --write ./lib ./test --loglevel warn",
-    "lint": "eslint ./lib --max-warnings 0 && prettier --check ./lib ./test --loglevel warn"
+    "lint": "eslint ./lib/* --max-warnings 0",
+    "check:ci": "npm run lint && npm run check:types && npm run check:formatting && npm run check:spelling && npm run test:coverage",
+    "check:types": "tsc --noEmit",
+    "check:formatting": "prettier --check ./lib ./test --loglevel warn",
+    "check:spelling": "cspell ."
   },
   "name": "x12-parser",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "NodeJS X12 parser using streams",
-  "main": "lib/index.js",
+  "main": "dist/cjs/index.js",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js"
+  },
+  "type": "module",
   "repository": "https://github.com/tastypackets/x12-parser",
   "author": "Ezekiel Keator <20361796+tastypackets@users.noreply.github.com>",
   "license": "MIT",
   "private": false,
-  "files": ["lib"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
-    "@tsconfig/node16": "^1.0.3",
-    "@vitest/coverage-c8": "^0.30.1",
-    "eslint": "^8.39.0",
-    "jsdoc": "^3.6.7",
-    "prettier": "^2.8.7",
-    "tui-jsdoc-template": "^1.2.2",
-    "typescript": "^5.0.4",
-    "vitest": "^0.30.1"
+    "@types/node": "^22.5.5",
+    "@vitest/coverage-v8": "^2.1.1",
+    "cspell": "^8.14.2",
+    "eslint": "^9.10.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.6.0",
+    "vitest": "^2.1.1"
   },
   "bugs": {
     "url": "https://github.com/tastypackets/x12-parser/issues"
@@ -44,18 +63,7 @@
     "semi": true,
     "singleQuote": true
   },
-  "eslintConfig": {
-    "extends": "eslint:recommended",
-    "parserOptions": {
-      "ecmaVersion": 2018
-    },
-    "env": {
-      "browser": false,
-      "node": true,
-      "es6": true
-    }
-  },
   "volta": {
-    "node": "18.16.0"
+    "node": "20.17.0"
   }
 }

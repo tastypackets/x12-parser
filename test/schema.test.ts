@@ -1,4 +1,6 @@
-import { Schema } from '../lib/index.js';
+import { describe, it, expect } from 'vitest';
+
+import { GroupShape, Schema } from '@/index.js';
 
 const schema = {
   start: 'CLP', // What segment starts the group
@@ -16,33 +18,34 @@ const schema = {
 describe('Schema', () => {
   describe('#constructor()', () => {
     const testSchema = new Schema('005010X221A1', schema, true);
-    it('Should return an instance of Schema', () => {
-      assert(testSchema instanceof Schema);
-    });
     it('Should be able to get version', () => {
-      assert.strictEqual(testSchema.version, '005010X221A1');
+      expect(testSchema.version).toBe('005010X221A1');
     });
+
     it('Should be able to get schema', () => {
-      assert.deepStrictEqual(testSchema.schema, schema);
+      expect(testSchema.schema).toStrictEqual(schema);
     });
+
     it('Should be able to get default', () => {
-      assert.strictEqual(testSchema.default, true);
+      expect(testSchema.default).toBe(true);
     });
   });
   describe('#verifySchema()', () => {
     it('Should return the schema if valid', () => {
-      assert.deepStrictEqual(Schema.verifySchema(schema), schema);
+      expect(Schema.verifySchema(schema)).toStrictEqual(schema);
     });
+
     it('Should require a start of the group', () => {
-      // @ts-expect-error - todo refactor test
-      assert.throws(() => Schema.verifySchema('garbage', Error));
+      expect(() =>
+        Schema.verifySchema('garbage' as unknown as GroupShape)
+      ).toThrow();
     });
+
     it('Should verify all nested groups have a start', () => {
       const testSchema = { ...schema };
       // @ts-expect-error
       delete testSchema.groups[0].start;
-      // @ts-expect-error - todo refactor test
-      assert.throws(() => Schema.verifySchema(testSchema, Error));
+      expect(() => Schema.verifySchema(testSchema)).toThrow();
     });
   });
 });

@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["../lib/*"]
+    }
+  },
+  "include": ["../test", "../lib"],
+  "extends": "../tsconfig.json"
+}
