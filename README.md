@@ -1,8 +1,4 @@
-jsdoc documentation: https://tastypackets.github.io/x12-parser/
-
-[Work on v2 has started with 100% typed code](https://github.com/tastypackets/x12-parser/tree/v2). 🎉
-
-## Description
+# Description
 
 An X12 parser built using the NodeJS stream API, which can handle very large files and significantly improves processing time by reducing RAM usage. This parser was built using only JS and native NodeJS APIs, the only dependencies in use are dev dependencies.
 
