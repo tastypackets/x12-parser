@@ -4,7 +4,6 @@ import { EventEmitter } from 'node:events';
 import { X12grouper, Schema } from '@/index.js';
 import { finished } from './test-files/835/profee-done.js';
 import { Group } from '@/Group.js';
-import { it_cb } from './callback-test.js';
 
 const schema = {
   start: 'CLP', // What segment starts the group
@@ -72,25 +71,33 @@ describe('X12grouper', () => {
       expect(tmpGrouper.initialHold[0]).toBe(finished[0]);
     });
 
-    it_cb(
-      'Items in initial hold should come down pipe before new segment',
-      (done) => {
-        // ISA -> Hold
-        // GS -> Process Hold (ISA) -> Process GS
-        const tmpGrouper = new X12grouper(testSchema);
+    it('Items in initial hold should come down pipe before new segment', async () => {
+      // ISA -> Hold
+      // GS -> Process Hold (ISA) -> Process GS
+      const tmpGrouper = new X12grouper(testSchema);
+      const results: (typeof finished)[number][] = [];
+
+      const dataPromise = new Promise<void>((resolve) => {
         let counter = 0;
         tmpGrouper.on('data', (data: (typeof finished)[number]) => {
-          expect(finished[counter]).toStrictEqual(data);
+          results.push(data);
           counter++;
 
           if (counter === 2) {
-            done();
+            resolve();
           }
         });
-        tmpGrouper.write(finished[0]); // ISA
-        tmpGrouper.write(finished[1]); // GS
-      }
-    );
+      });
+
+      tmpGrouper.write(finished[0]); // ISA
+      tmpGrouper.write(finished[1]); // GS
+
+      await dataPromise;
+
+      expect(results).toHaveLength(2);
+      expect(results[0]).toStrictEqual(finished[0]);
+      expect(results[1]).toStrictEqual(finished[1]);
+    });
   });
 
   describe('Schema detection', () => {

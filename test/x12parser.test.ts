@@ -4,7 +4,6 @@ import { X12parser } from '@/index.js';
 import { createReadStream } from 'node:fs';
 import { EventEmitter } from 'node:events';
 import { finished } from './test-files/835/profee-done.js';
-import { it_cb } from './callback-test.js';
 
 describe('X12parser', () => {
   describe('#constructor()', () => {
@@ -81,107 +80,98 @@ describe('X12parser', () => {
   });
 
   describe('835 File Tests', () => {
-    it_cb('Should parse files with CRLF', (done) => {
+    it('Should parse files with CRLF', async () => {
       const myParser = new X12parser();
       const testFile = createReadStream('./test/test-files/835/profee.edi');
-      let counter = 0; // So ugly... This should be done nicer
-      testFile.pipe(myParser).on('data', (data) => {
-        expect(data).toStrictEqual(finished[counter]);
-        counter++;
 
-        // Just hacking this on until full test file refactor
-        if (counter === finished.length) {
-          done();
-        }
-      });
+      const results = [];
+      const stream = testFile.pipe(myParser);
+
+      for await (const data of stream) {
+        results.push(data);
+      }
+
+      expect(results).toStrictEqual(finished);
     });
 
-    it_cb('Should parse single line files', (done) => {
+    it('Should parse single line files', async () => {
       const myParser = new X12parser();
       const testFile = createReadStream(
         './test/test-files/835/profee-one-line.edi'
       );
-      let counter = 0; // So ugly... This should be done nicer
-      testFile.pipe(myParser).on('data', (data) => {
-        expect(data).toStrictEqual(finished[counter]);
-        counter++;
 
-        // Just hacking this on until full test file refactor
-        if (counter === finished.length) {
-          done();
-        }
-      });
+      const results = [];
+      const stream = testFile.pipe(myParser);
+
+      for await (const data of stream) {
+        results.push(data);
+      }
+
+      expect(results).toStrictEqual(finished);
     });
 
-    it_cb(
-      'Should parse multiple transactions (ISA) in a single file',
-      (done) => {
-        const myParser = new X12parser();
-        const testFile = createReadStream(
-          './test/test-files/835/profee-multiple.edi'
-        );
-        let counter = 0; // So ugly... This should be done nicer
-        let isaCounter = 0; // So ugly... This should be done nicer
-        testFile.pipe(myParser).on('data', (data) => {
-          if (!finished[counter]) {
-            // Super ugly, but resets counter if undefined since it's same ISA just duplicated in file
-            counter = 0;
-            isaCounter++;
-          }
+    it('Should parse multiple transactions (ISA) in a single file', async () => {
+      const myParser = new X12parser();
+      const testFile = createReadStream(
+        './test/test-files/835/profee-multiple.edi'
+      );
 
-          expect(data).toStrictEqual(finished[counter]);
-          counter++;
+      const results = [];
+      const stream = testFile.pipe(myParser);
 
-          // Just hacking this on until full test file refactor
-          if (counter === finished.length && isaCounter === 155) {
-            done();
-          }
-        });
+      for await (const data of stream) {
+        results.push(data);
       }
-    );
 
-    it_cb(
-      'Should parse multiline files without delimiter (LF/CRLF is delimiter)',
-      (done) => {
-        const myParser = new X12parser();
-        const testFile = createReadStream(
-          './test/test-files/835/multi-line-not-delimited.edi'
-        );
-        let counter = 0; // So ugly... This should be done nicer
-        testFile.pipe(myParser).on('data', (data) => {
-          expect(data).toStrictEqual(finished[counter]);
-          counter++;
-
-          // Just hacking this on until full test file refactor
-          if (counter === finished.length) {
-            done();
-          }
-        });
+      // The file contains multiple ISA transactions, so we expect multiple copies of the finished data
+      // Based on the original test, there should be 156 complete transactions (isaCounter === 155 + 1)
+      const expectedResults = [];
+      for (let i = 0; i < 156; i++) {
+        expectedResults.push(...finished);
       }
-    );
+
+      expect(results).toStrictEqual(expectedResults);
+    });
+
+    it('Should parse multiline files without delimiter (LF/CRLF is delimiter)', async () => {
+      const myParser = new X12parser();
+      const testFile = createReadStream(
+        './test/test-files/835/multi-line-not-delimited.edi'
+      );
+
+      const results = [];
+      const stream = testFile.pipe(myParser);
+
+      for await (const data of stream) {
+        results.push(data);
+      }
+
+      expect(results).toStrictEqual(finished);
+    });
   });
 
   // Tests added for patches / bug fixes
   describe('Patch tests', () => {
-    it_cb(
-      'Should parse correctly when segment aligns with chunk size',
-      (done) => {
-        const myParser = new X12parser();
-        const testFile = createReadStream('./test/test-files/835/profee.edi', {
-          highWaterMark: 291,
-        });
-        let counter = 0; // So ugly... This should be done nicer
+    // Use 'it' (or 'test') and declare the function as `async`.
+    // The test runner will automatically wait for the promise to resolve.
+    it('Should parse correctly when segment aligns with chunk size', async () => {
+      const myParser = new X12parser();
+      const testFile = createReadStream('./test/test-files/835/profee.edi', {
+        highWaterMark: 291,
+      });
 
-        testFile.pipe(myParser).on('data', (data) => {
-          expect(data).toStrictEqual(finished[counter]);
-          counter++;
+      // This array will collect all the data emitted by the parser.
+      const results = [];
+      const stream = testFile.pipe(myParser);
 
-          // Just hacking this on until full test file refactor
-          if (counter === finished.length) {
-            done();
-          }
-        });
+      // The for-await-of loop consumes the stream until it's finished.
+      for await (const data of stream) {
+        results.push(data);
       }
-    );
+
+      // After the loop, the stream has ended. Now, we can assert
+      // that the collected data matches the expected output.
+      expect(results).toStrictEqual(finished);
+    });
   });
 });
