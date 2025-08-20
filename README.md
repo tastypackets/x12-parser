@@ -27,7 +27,7 @@ The below example used a 15.5MiB file with 565,832 lines.
 
 The X12parser is a Node Transform Stream, so you must pipe a read stream to it. The simplest and most common way to do this is using `fs.createReadStream` in NodeJS, however you should be able to use other read streams as long as they are sending the data unmodified from the source file. If you need to control the encoding you can pass `defaultEncoding` to the X12parser, for example `X12parser('utf8')`.
 
-The X12parser will then push every segment as an object, you can either `pip()` this data to another stream or you can directly consume the `data` events from the X12parser.
+The X12parser will then push every segment as an object, you can either `pipe()` this data to another stream or you can directly consume the `data` events from the X12parser.
 
 Every segment will be an object with a `name` key and multiple string counter keys, incrementing based on their element number. For example if there was a `HAI` segment with only 1 element it would look like this: `{"name": "HAI", "1": "HI!"}`.
 
@@ -35,8 +35,32 @@ Every segment will be an object with a `name` key and multiple string counter ke
 import { X12parser } from 'x12-parser';
 import { createReadStream } from 'node:fs';
 
-const myParser = new X12parser();
-myParser.on('error', (err) => {
+// Usage with async/await
+async function parseEdiFile(filePath) {
+  try {
+    const ediFile = createReadStream(filePath);
+    const parser = new X12parser();
+
+    for await (const data of ediFile.pipe(parser)) {
+      console.log(data);
+    }
+  } catch (err) {
+    console.error('An error occurred:', err);
+  }
+}
+
+// Run the parser
+parseEdiFile('./test-file.edi');
+```
+
+You can also write this with event emitters without async/await like this:
+
+```ts
+import { X12parser } from 'x12-parser';
+import { createReadStream } from 'node:fs';
+
+const parser = new X12parser();
+parser.on('error', (err) => {
   console.error(err);
 });
 
@@ -47,7 +71,7 @@ ediFile.on('error', (err) => {
 });
 
 // Handle events from the parser
-ediFile.pipe(myParser).on('data', (data) => {
+ediFile.pipe(parser).on('data', (data) => {
   console.log(data);
 });
 ```
@@ -112,78 +136,100 @@ const mySchema = new Schema('005010X221A1', {
   ],
 });
 
-const myParser = new X12parser();
-// Optionally pass an array of schemas if input file version is unknown and schema versions need to be supported
-const myGrouper = new X12grouper(mySchema);
+async function processEdiFile(filePath) {
+  try {
+    const parser = new X12parser();
+    const grouper = new X12grouper(mySchema);
+    const testFile = createReadStream(filePath);
 
-const testFile = createReadStream('./test-825.edi');
+    console.log(`Processing EDI file: ${filePath}`);
 
-testFile
-  .pipe(myParser)
-  .pipe(myGrouper)
-  .on('data', (data) => {
-    console.log(data);
-  });
+    const ediStream = testFile.pipe(parser).pipe(grouper);
 
-// Example output
-// {
-//   name: 'Envelope',
-//   data: [
-//   {
-//     '1': '00',
-//     '2': '',
-//     '3': '00',
-//     '4': '',
-//     '5': 'ZZ',
-//     '6': 'EMEDNYBAT',
-//     '7': 'ZZ',
-//     '8': 'ETIN',
-//     '9': '100101',
-//     '10': '1000',
-//     '11': '^',
-//     '12': '00501',
-//     '13': '006000600',
-//     '14': '0',
-//     '15': 'T',
-//     '16': ':',
-//     name: 'ISA'
-//   },
-//   {
-//     '1': 'HP',
-//     '2': 'EMEDNYBAT',
-//     '3': 'ETIN',
-//     '4': '20100101',
-//     '5': '1050',
-//     '6': '6000600',
-//     '7': 'X',
-//     '8': '005010X221A1',
-//     name: 'GS'
-//   },
-//   { '1': '835', '2': '1740', name: 'ST' },
-//   {
-//     name: 'headers',
-//     data: [ [Object], [Object], [Object], [Object] ],
-//     isGroup: true
-//   },
-//   {
-//     name: '1000',
-//     data: [ [Object], [Object], [Object], [Object] ],
-//     isGroup: true
-//   },
-//   { name: '1000', data: [ [Object], [Object] ], isGroup: true },
-//   {
-//     name: '2000',
-//     data: [ [Object], [Object], [Object], [Object] ],
-//     isGroup: true
-//   },
-//   { '1': '65', '2': '1740', name: 'SE' },
-//   { '1': '1', '2': '6000600', name: 'GE' },
-//   { '1': '1', '2': '006000600', name: 'IEA' }
-// ]
-//   isGroup: true
-// }
+    for await (const data of ediStream) {
+      console.log(JSON.stringify(data, null, 2));
+    }
+
+    console.log('Successfully finished processing the file.');
+  } catch (err) {
+    console.error('An error occurred during processing:', err);
+  }
+}
+
+processEdiFile('./test-835.edi');
 ```
 
-**Help wanted locating and describing different X12 file for units tests and examples**
+### Using Stream Promises
 
-To support additional validation and grouping the new X12schema class will read the schema and determine custom holds that need to be added to the data stream. This would allow a dev to easily group ISA, GS, GE, and IEA segments together and validate the information in them, without needing to write a group stage to merge this data. This is currently highly experimental and as such is planned for a larger v2 update.
+Often times it makes sense to pipe the output to another stream that writes the data to a database, file, bucket, etc. When doing that you can use node:stream/promises to easily handle the asynchronous nature of the pipeline.
+
+```ts
+import { pipeline } from 'node:stream/promises';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { Transform } from 'node:stream';
+import { X12parser, X12grouper, Schema } from 'x12-parser';
+
+const mySchema = new Schema('005010X221A1', {
+  start: 'ISA', // What segment starts the group
+  end: 'IEA', // What segment ends the group
+  name: 'Envelope', // What is the name of the group
+  groups: [
+    // Nested groups, each group turns into an object and each nested group an array of objects
+    {
+      start: 'BPR',
+      terminators: ['N1'],
+      name: 'headers',
+    },
+    {
+      start: 'N1',
+      terminators: ['LX'],
+      name: '1000',
+    },
+    {
+      start: 'LX',
+      name: '2000',
+      terminators: ['SE'],
+      groups: [
+        {
+          start: 'CLP',
+          name: '2100',
+          groups: [
+            {
+              start: 'SVC',
+              name: '2110',
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});
+
+// This new Transform stream converts JavaScript objects into formatted JSON strings to write to a simple text file.
+const jsonStringifier = new Transform({
+  writableObjectMode: true,
+  transform(chunk, encoding, callback) {
+    const jsonString = JSON.stringify(chunk, null, 2) + '\n';
+    callback(null, jsonString);
+  },
+});
+
+async function parseAndSaveFile(inputFile, outputFile) {
+  console.log(`Processing ${inputFile} -> ${outputFile}`);
+  try {
+    const source = createReadStream(inputFile);
+    const parser = new X12parser();
+    const grouper = new X12grouper(mySchema);
+    const destination = createWriteStream(outputFile);
+
+    // Await pipeline to finish or throw an error
+    await pipeline(source, parser, grouper, jsonStringifier, destination);
+
+    console.log('File processed and saved successfully.');
+  } catch (err) {
+    console.error('Pipeline failed:', err);
+  }
+}
+
+parseAndSaveFile('./test-file.edi', './output.json');
+```

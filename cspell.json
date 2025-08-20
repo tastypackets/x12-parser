@@ -2,6 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/v8.14.2/cspell.schema.json",
   "version": "0.2",
   "language": "en",
-  "words": ["Keator", "EMEDNYBAT", "ETIN"],
+  "words": ["Keator", "EMEDNYBAT", "ETIN", "Stringifier"],
   "ignorePaths": ["test", "dist", "coverage", "node_modules"]
 }
