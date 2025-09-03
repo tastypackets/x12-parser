@@ -2,7 +2,7 @@ import type { Delimiters, FormattedSegment } from './types.js';
 
 export class Segment {
   #delimiters: Delimiters;
-  #parsed: string[][];
+  #parsed: string[][][];
   #name: string;
 
   /**
@@ -30,13 +30,26 @@ export class Segment {
   get formatted(): FormattedSegment {
     const formatted: FormattedSegment = { name: this.#name };
 
-    this.#parsed.forEach((element, elementIndex) => {
+    this.#parsed.forEach((elements, elementsIdx) => {
       // First item in parsed string is the segment value, everything else is components
-      formatted[`${elementIndex + 1}`] = element.shift() ?? '';
+      formatted[`${elementsIdx + 1}`] = elements.at(0)?.at(0) ?? '';
+      const repeats = elements.length > 1;
 
-      // Add components
-      element.forEach((component, componentIndex) => {
-        formatted[`${elementIndex + 1}-${componentIndex + 1}`] = component;
+      elements.forEach((element, repeatIdx) => {
+        const multiComponent = element.length > 1;
+        element.forEach((component, componentIdx) => {
+          // skipping first element
+          if (componentIdx == 0 && repeatIdx == 0) return;
+          // because we skipped first element we need to decrement index
+          // avoiding shifting because modifies internal list
+          if (repeatIdx == 0) componentIdx -= 1;
+          const repeatString = repeats ? `-${repeatIdx + 1}` : '';
+          let key = `${elementsIdx + 1}`;
+          if (repeats || multiComponent) {
+            key = `${key}-${componentIdx + 1}${repeatString}`;
+          }
+          formatted[key] = component;
+        });
       });
     });
 
@@ -55,16 +68,18 @@ export class Segment {
   /**
    * Processes an element and formats it
    * @param element The string inside the element
-   * @returns A nested array of segments & components
+   * @returns A nested array of segments & repeated elements & components
    */
-  processElement(element: string): string[] {
+  processElement(element: string): string[][] {
     // If this is ISA we don't want to split on component
     if (this.#name === 'ISA') {
-      return [Segment.cleanString(element)];
+      return [[Segment.cleanString(element)]];
     } else {
-      return element
-        .split(this.#delimiters.component)
-        .map((string) => Segment.cleanString(string));
+      return element.split(this.#delimiters.repetition).map((string) => {
+        return string
+          .split(this.#delimiters.component)
+          .map((string) => Segment.cleanString(string));
+      });
     }
   }
 
