@@ -3,5 +3,5 @@
   "version": "0.2",
   "language": "en",
   "words": ["Keator", "EMEDNYBAT", "ETIN", "Stringifier"],
-  "ignorePaths": ["test", "dist", "coverage", "node_modules"]
+  "ignorePaths": ["test", "dist", "coverage", "node_modules", "package.json"]
 }
